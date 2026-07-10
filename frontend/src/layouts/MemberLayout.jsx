@@ -53,6 +53,7 @@ export default function MemberLayout() {
     { name: 'Profile', path: '/profile', icon: FiUser },
     { name: 'Membership Plans', path: '/plans', icon: FiCreditCard },
     { name: 'Submit Payment', path: '/payment', icon: FiCreditCard },
+    { name: 'Supplements Store', path: '/supplements', icon: FiShoppingBag },
     { name: 'Gallery', path: '/gallery', icon: FiImage },
     { name: 'Contact Gym', path: '/contact', icon: FiMail }
   ];

@@ -351,7 +351,52 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* 6. SUPPLEMENTS PREVIEW */}
+      <section id="supplements" className="py-24 bg-gym-dark relative">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-gold-500">Supplements store</span>
+              <h2 className="text-3xl md:text-5xl font-black uppercase text-white tracking-tight mt-2">
+                FUEL YOUR NUTRITION
+              </h2>
+            </div>
+            <Link
+              to="/supplements"
+              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold-500 hover:text-white mt-4 md:mt-0 transition-colors"
+            >
+              Browse Full Store
+              <FiShoppingBag />
+            </Link>
+          </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {storeSups.map((sup, idx) => (
+              <div
+                key={idx}
+                className="glass-panel rounded-2xl p-5 border border-white/5 flex flex-col justify-between hover:border-gold-500/20 transition-all duration-300"
+              >
+                <div>
+                  <div className="aspect-square rounded-xl bg-gym-gray overflow-hidden mb-5">
+                    <img src={sup.image} alt={sup.name} className="w-full h-full object-cover" />
+                  </div>
+                  <span className="text-[10px] uppercase font-bold text-gold-500">{sup.category}</span>
+                  <h3 className="text-base font-bold text-white uppercase truncate mt-1 mb-2 font-display">{sup.name}</h3>
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-lg font-black text-white font-display">₹{sup.price}</span>
+                  </div>
+                </div>
+                <Link
+                  to="/supplements"
+                  className="w-full text-center py-2.5 rounded-xl border border-gold-500/30 hover:border-gold-500 text-xs font-bold text-gold-500 hover:bg-gold-500/5 transition-all duration-300 uppercase"
+                >
+                  Buy Product
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* 7. GALLERY PREVIEW */}
       <section id="gallery" className="py-24 bg-gym-gray relative">
