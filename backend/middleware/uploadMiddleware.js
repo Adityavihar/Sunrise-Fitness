@@ -62,7 +62,7 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5 MB Limit
+    fileSize: 25 * 1024 * 1024 // 25 MB Limit for high-resolution images
   }
 });
 
@@ -73,9 +73,14 @@ const getFileUrl = (file, req) => {
     return file.path; // Cloudinary returns URL in file.path
   } else {
     // Return relative URL to local asset
-    const host = req.get('host');
-    const protocol = req.protocol;
-    return `${protocol}://${host}/uploads/${file.filename}`;
+    try {
+      const host = req && typeof req.get === 'function' ? req.get('host') : 'localhost:5000';
+      const protocol = req && req.protocol ? req.protocol : 'http';
+      return `${protocol}://${host}/uploads/${file.filename}`;
+    } catch (err) {
+      console.error('Error generating file URL:', err.message);
+      return `/uploads/${file.filename}`;
+    }
   }
 };
 
