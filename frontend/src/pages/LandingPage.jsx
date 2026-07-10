@@ -354,7 +354,7 @@ export default function LandingPage() {
           <div className="text-center max-w-xl mx-auto mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-gold-500">Visual Tour</span>
             <h2 className="text-3xl md:text-5xl font-black uppercase text-white tracking-tight mt-2">
-              SUNRISE GALLEY LOGS
+              SUNRISE GALLERY LOGS
             </h2>
             <div className="w-16 h-1 bg-gold-500 mx-auto mt-4"></div>
           </div>
@@ -366,11 +366,14 @@ export default function LandingPage() {
                 className="aspect-square rounded-2xl overflow-hidden border border-white/5 relative group cursor-pointer"
                 onClick={() => navigate('/gallery')}
               >
-                <img src={img.imageUrl} alt="Gym Showcase" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <span className="px-4 py-1.5 rounded-full border border-gold-500 text-gold-500 text-xs uppercase font-bold tracking-widest">
+                <img src={img.imageUrl} alt={img.caption || 'Gym Showcase'} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 text-left">
+                  <span className="self-start px-2 py-0.5 rounded bg-gold-500 text-black text-[9px] uppercase tracking-wider font-extrabold mb-1">
                     {img.category}
                   </span>
+                  <p className="text-[11px] font-semibold text-white uppercase leading-normal tracking-wide truncate">
+                    {img.caption || 'Sunrise Showcase'}
+                  </p>
                 </div>
               </div>
             ))}
