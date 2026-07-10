@@ -9,10 +9,22 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function AdminLayout() {
-  const { user, logout } = useAuth();
+  const { user, logout, verifySession } = useAuth();
   const { addToast } = useToast();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showNotif, setShowNotif] = useState(false);
+  
+  const handleBellClick = async () => {
+    const nextState = !showNotif;
+    setShowNotif(nextState);
+    if (nextState && verifySession) {
+      try {
+        await verifySession();
+      } catch (err) {
+        console.error('Failed to reload notifications:', err);
+      }
+    }
+  };
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -146,7 +158,7 @@ export default function AdminLayout() {
             {/* Notification Bell */}
             <div className="relative">
               <button
-                onClick={() => setShowNotif(!showNotif)}
+                onClick={handleBellClick}
                 className="w-10 h-10 rounded-full border border-white/5 hover:border-red-500/30 flex items-center justify-center text-gray-400 hover:text-white transition-colors relative"
               >
                 <FiBell size={18} />
