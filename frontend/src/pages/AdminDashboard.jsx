@@ -227,7 +227,13 @@ export default function AdminDashboard() {
                 <span>→</span>
               </Link>
 
-
+              <Link to="/admin/plans" className="flex items-center justify-between p-3.5 rounded-xl bg-gym-gray/60 border border-white/5 hover:border-red-500/30 transition-all text-xs font-semibold text-white group">
+                <span className="flex items-center gap-3">
+                  <FiCreditCard className="text-red-500 text-base" />
+                  Membership Plans Config
+                </span>
+                <span>→</span>
+              </Link>
 
               <Link to="/admin/contact" className="flex items-center justify-between p-3.5 rounded-xl bg-gym-gray/60 border border-white/5 hover:border-red-500/30 transition-all text-xs font-semibold text-white group">
                 <span className="flex items-center gap-3">
