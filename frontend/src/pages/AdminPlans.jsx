@@ -222,16 +222,16 @@ export default function AdminPlans() {
               </div>
               <div>
                 <label className="block text-[9px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Duration (Months) *</label>
-                <select
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  required
                   value={formData.durationMonths}
                   onChange={(e) => setFormData({ ...formData, durationMonths: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-gym-dark/60 border border-white/10 text-xs text-white focus:border-red-500 focus:outline-none cursor-pointer"
-                >
-                  <option value="1">1 Month</option>
-                  <option value="3">3 Months</option>
-                  <option value="6">6 Months</option>
-                  <option value="12">12 Months (1 Year)</option>
-                </select>
+                  placeholder="e.g. 3"
+                  className="w-full px-4 py-2.5 rounded-xl bg-gym-dark/60 border border-white/10 text-xs text-white focus:border-red-500 focus:outline-none"
+                />
               </div>
             </div>
 
