@@ -227,13 +227,7 @@ export default function AdminDashboard() {
                 <span>→</span>
               </Link>
 
-              <Link to="/admin/supplements" className="flex items-center justify-between p-3.5 rounded-xl bg-gym-gray/60 border border-white/5 hover:border-red-500/30 transition-all text-xs font-semibold text-white group">
-                <span className="flex items-center gap-3">
-                  <FiShoppingBag className="text-red-500 text-base" />
-                  Inventory Manager
-                </span>
-                <span>→</span>
-              </Link>
+
 
               <Link to="/admin/contact" className="flex items-center justify-between p-3.5 rounded-xl bg-gym-gray/60 border border-white/5 hover:border-red-500/30 transition-all text-xs font-semibold text-white group">
                 <span className="flex items-center gap-3">

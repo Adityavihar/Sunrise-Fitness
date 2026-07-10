@@ -43,8 +43,6 @@ export default function Navbar() {
     { name: 'About', target: 'about' },
     { name: 'Why Us', target: 'why-us' },
     { name: 'Plans', target: 'plans' },
-    { name: 'Trainers', target: 'trainers' },
-    { name: 'Supplements', target: 'supplements' },
     { name: 'Gallery', target: 'gallery' },
     { name: 'Contact', target: 'contact' }
   ];

@@ -25,7 +25,6 @@ export default function AdminLayout() {
     { name: 'Dashboard', path: '/admin', icon: FiGrid },
     { name: 'Members', path: '/admin/members', icon: FiUsers },
     { name: 'Plans', path: '/admin/plans', icon: FiCreditCard },
-    { name: 'Supplements Store', path: '/admin/supplements', icon: FiShoppingBag },
     { name: 'Payments Verify', path: '/admin/payments', icon: FiCreditCard },
     { name: 'Gallery Catalog', path: '/admin/gallery', icon: FiImage },
     { name: 'Gym Contact Settings', path: '/admin/contact', icon: FiMail },
