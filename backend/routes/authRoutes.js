@@ -5,7 +5,8 @@ const {
   loginUser,
   refreshToken,
   logoutUser,
-  verifyUser
+  verifyUser,
+  clearNotifications
 } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 const { upload } = require('../middleware/uploadMiddleware');
@@ -18,5 +19,6 @@ router.post('/refresh', refreshToken);
 // Protected routes
 router.post('/logout', protect, logoutUser);
 router.get('/verify', protect, verifyUser);
+router.delete('/notifications', protect, clearNotifications);
 
 module.exports = router;

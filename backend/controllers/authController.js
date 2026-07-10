@@ -242,10 +242,31 @@ const verifyUser = async (req, res) => {
   }
 };
 
+// @desc    Clear all notifications for current user
+// @route   DELETE /api/auth/notifications
+// @access  Private
+const clearNotifications = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    user.notifications = [];
+    await user.save();
+
+    res.status(200).json({ success: true, message: 'All notifications cleared successfully' });
+  } catch (error) {
+    console.error('Clear notifications error:', error);
+    res.status(500).json({ success: false, message: 'Server error clearing notifications' });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   refreshToken,
   logoutUser,
-  verifyUser
+  verifyUser,
+  clearNotifications
 };

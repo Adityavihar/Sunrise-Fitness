@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import api from '../services/api';
 import {
   FiGrid, FiUsers, FiCreditCard, FiShoppingBag, FiImage,
   FiMail, FiLogOut, FiMenu, FiX, FiBell, FiActivity, FiHome, FiTrendingUp
@@ -23,6 +24,20 @@ export default function AdminLayout() {
       } catch (err) {
         console.error('Failed to reload notifications:', err);
       }
+    }
+  };
+
+  const handleClearNotifications = async () => {
+    try {
+      const res = await api.delete('/auth/notifications');
+      if (res.data.success) {
+        addToast(res.data.message, 'success');
+        if (verifySession) {
+          await verifySession();
+        }
+      }
+    } catch (err) {
+      addToast('Failed to clear notifications', 'error');
     }
   };
   const navigate = useNavigate();
@@ -180,9 +195,19 @@ export default function AdminLayout() {
                       exit={{ opacity: 0, y: 10 }}
                       className="absolute right-0 mt-2 w-80 bg-gym-card border border-white/10 rounded-xl shadow-2xl z-50 p-4 max-h-[350px] overflow-y-auto"
                     >
-                      <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-3">
-                        System Notifications
-                      </h4>
+                      <div className="flex justify-between items-center mb-3">
+                        <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                          System Notifications
+                        </h4>
+                        {user?.notifications && user.notifications.length > 0 && (
+                          <button
+                            onClick={handleClearNotifications}
+                            className="text-[10px] text-red-500 hover:text-red-400 font-bold uppercase tracking-wider cursor-pointer transition-colors"
+                          >
+                            Clear All
+                          </button>
+                        )}
+                      </div>
                       <div className="flex flex-col gap-2">
                         {user?.notifications && user.notifications.length > 0 ? (
                           [...user.notifications].reverse().map((notif, idx) => (
