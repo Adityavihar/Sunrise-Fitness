@@ -19,6 +19,7 @@ export default function AdminMembers() {
   const [editMember, setEditMember] = useState(null);
   const [extendMember, setExtendMember] = useState(null);
   const [extendMonths, setExtendMonths] = useState('1');
+  const [newPassword, setNewPassword] = useState('');
 
   useEffect(() => {
     fetchMembers();
@@ -109,10 +110,15 @@ export default function AdminMembers() {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.put(`/members/${editMember._id}`, editMember);
+      const payload = {
+        ...editMember,
+        password: newPassword.trim() !== '' ? newPassword : undefined
+      };
+      const res = await api.put(`/members/${editMember._id}`, payload);
       if (res.data.success) {
         addToast('Profile updated successfully!', 'success');
         setEditMember(null);
+        setNewPassword('');
         fetchMembers();
       }
     } catch (err) {
@@ -241,7 +247,7 @@ export default function AdminMembers() {
                   {/* Actions column */}
                   <td className="py-4 px-6 text-right flex items-center justify-end gap-2">
                     <button
-                      onClick={() => setEditMember(member)}
+                      onClick={() => { setEditMember(member); setNewPassword(''); }}
                       title="Edit member details"
                       className="p-2 rounded bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition-colors cursor-pointer"
                     >
@@ -374,8 +380,8 @@ export default function AdminMembers() {
                 <label className="block text-[9px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Reset Password</label>
                 <input
                   type="text"
-                  value={editMember.password || ''}
-                  onChange={(e) => setEditMember({ ...editMember, password: e.target.value })}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Blank to keep current"
                   className="w-full px-4 py-2.5 rounded-xl bg-gym-dark/60 border border-white/10 text-xs text-white focus:border-gold-500 focus:outline-none"
                 />

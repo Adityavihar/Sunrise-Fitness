@@ -25,6 +25,7 @@ const getAllMembers = async (req, res) => {
     }
 
     const members = await User.find(query)
+      .select('-password')
       .populate('membershipPlan')
       .sort({ createdAt: -1 });
 
@@ -40,7 +41,7 @@ const getAllMembers = async (req, res) => {
 // @access  Private/Admin
 const getMemberById = async (req, res) => {
   try {
-    const member = await User.findById(req.params.id).populate('membershipPlan');
+    const member = await User.findById(req.params.id).select('-password').populate('membershipPlan');
     if (!member) {
       return res.status(404).json({ success: false, message: 'Member not found' });
     }
