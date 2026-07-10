@@ -356,6 +356,32 @@ export default function AdminMembers() {
               </div>
             </div>
 
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[9px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Membership Status</label>
+                <select
+                  value={editMember.membershipStatus || 'inactive'}
+                  onChange={(e) => setEditMember({ ...editMember, membershipStatus: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl bg-gym-dark/60 border border-white/10 text-xs text-white focus:border-gold-500 focus:outline-none cursor-pointer"
+                >
+                  <option value="active" className="bg-gym-card text-white">Active</option>
+                  <option value="inactive" className="bg-gym-card text-white">Inactive</option>
+                  <option value="suspended" className="bg-gym-card text-white">Suspended</option>
+                  <option value="expired" className="bg-gym-card text-white">Expired</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[9px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Reset Password</label>
+                <input
+                  type="text"
+                  value={editMember.password || ''}
+                  onChange={(e) => setEditMember({ ...editMember, password: e.target.value })}
+                  placeholder="Blank to keep current"
+                  className="w-full px-4 py-2.5 rounded-xl bg-gym-dark/60 border border-white/10 text-xs text-white focus:border-gold-500 focus:outline-none"
+                />
+              </div>
+            </div>
+
             <button
               type="submit"
               className="w-full py-3 rounded-xl bg-gold-500 hover:bg-gold-400 text-black text-xs font-bold uppercase transition-colors mt-2"

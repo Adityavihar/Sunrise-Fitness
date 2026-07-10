@@ -126,6 +126,16 @@ const updateMember = async (req, res) => {
       user.profilePicture = getFileUrl(req.file, req);
     }
 
+    // Admin-only updates: Direct status toggle and password reset
+    if (req.user.role === 'admin') {
+      if (req.body.membershipStatus) {
+        user.membershipStatus = req.body.membershipStatus;
+      }
+      if (req.body.password && req.body.password.trim() !== '') {
+        user.password = req.body.password;
+      }
+    }
+
     await user.save();
 
     res.status(200).json({
