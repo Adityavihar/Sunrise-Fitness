@@ -32,18 +32,24 @@ export default function Contact() {
     }
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) {
       addToast('Please complete all fields', 'error');
       return;
     }
     setSending(true);
-    setTimeout(() => {
-      addToast('Thank you! Your feedback message has been received.', 'success');
-      setFormData({ name: '', email: '', message: '' });
+    try {
+      const res = await api.post('/contact/message', formData);
+      if (res.data.success) {
+        addToast(res.data.message, 'success');
+        setFormData({ name: '', email: '', message: '' });
+      }
+    } catch (err) {
+      addToast(err.response?.data?.message || 'Error submitting message. Please try again.', 'error');
+    } finally {
       setSending(false);
-    }, 1000);
+    }
   };
 
   const contacts = config || {

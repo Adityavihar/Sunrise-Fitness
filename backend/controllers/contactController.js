@@ -86,7 +86,43 @@ const updateContactConfig = async (req, res) => {
   }
 };
 
+// @desc    Submit a contact message and notify all administrators
+// @route   POST /api/contact/message
+// @access  Public
+const submitContactMessage = async (req, res) => {
+  try {
+    const { name, email, phone, message } = req.body;
+
+    if (!name || !email || !message) {
+      return res.status(400).json({ success: false, message: 'Please fill out all required fields' });
+    }
+
+    const User = require('../models/User');
+    
+    // Find all users with the 'admin' role
+    const admins = await User.find({ role: 'admin' });
+
+    if (admins.length > 0) {
+      for (let i = 0; i < admins.length; i++) {
+        const admin = admins[i];
+        admin.notifications.push({
+          message: `New message from ${name} (${email}, Phone: ${phone || 'N/A'}): "${message}"`,
+          read: false,
+          date: new Date()
+        });
+        await admin.save();
+      }
+    }
+
+    res.status(200).json({ success: true, message: 'Your message has been submitted and the administrators have been notified.' });
+  } catch (error) {
+    console.error('Submit contact message error:', error);
+    res.status(500).json({ success: false, message: 'Server error processing contact query' });
+  }
+};
+
 module.exports = {
   getContactConfig,
-  updateContactConfig
+  updateContactConfig,
+  submitContactMessage
 };

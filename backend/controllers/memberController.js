@@ -60,6 +60,7 @@ const updateMember = async (req, res) => {
     const userId = req.params.id;
 
     // Check permissions: Admin can edit any, Member can only edit their own profile
+    console.log('Update member request - ID:', userId, 'Body:', req.body, 'Auth User Role:', req.user.role);
     if (req.user.role !== 'admin' && req.user.id !== userId) {
       return res.status(403).json({ success: false, message: 'Unauthorized profile update request' });
     }

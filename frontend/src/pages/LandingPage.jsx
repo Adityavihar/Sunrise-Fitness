@@ -56,12 +56,17 @@ export default function LandingPage() {
       return;
     }
     setIsSubmitting(true);
-    // Simulate contact form submission
-    setTimeout(() => {
-      addToast('Thank you! Your query has been submitted successfully.', 'success');
-      setFormData({ name: '', email: '', phone: '', message: '' });
+    try {
+      const res = await api.post('/contact/message', formData);
+      if (res.data.success) {
+        addToast(res.data.message, 'success');
+        setFormData({ name: '', email: '', phone: '', message: '' });
+      }
+    } catch (err) {
+      addToast(err.response?.data?.message || 'Error submitting message. Please try again.', 'error');
+    } finally {
       setIsSubmitting(false);
-    }, 1200);
+    }
   };
 
   // Fallbacks if data doesn't exist
