@@ -180,17 +180,16 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.4 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto mt-20 pt-10 border-t border-white/5"
+            className="grid grid-cols-3 gap-4 sm:gap-8 max-w-3xl mx-auto mt-20 pt-10 border-t border-white/5"
           >
             {[
-              { num: '1000+', label: 'Active Members' },
-              { num: '15+', label: 'Elite Coaches' },
-              { num: '150+', label: 'Imported Machines' },
+              { num: '100+', label: 'Active Members' },
+              { num: '50+', label: 'Imported Machines' },
               { num: '5.0★', label: 'Client Reviews' }
             ].map((stat, idx) => (
               <div key={idx} className="text-center">
-                <h3 className="text-3xl md:text-4xl font-extrabold text-gold-500 font-display">{stat.num}</h3>
-                <p className="text-xs text-gray-400 mt-1 uppercase tracking-widest">{stat.label}</p>
+                <h3 className="text-2xl sm:text-4xl font-extrabold text-gold-500 font-display">{stat.num}</h3>
+                <p className="text-[9px] sm:text-xs text-gray-400 mt-1 uppercase tracking-widest">{stat.label}</p>
               </div>
             ))}
           </motion.div>
