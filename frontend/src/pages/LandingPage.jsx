@@ -33,7 +33,7 @@ export default function LandingPage() {
         const [plansRes, supRes, galRes, contactRes] = await Promise.allSettled([
           api.get('/plans'),
           api.get('/supplements?limit=3'),
-          api.get('/gallery'),
+          api.get('/gallery?limit=6'),
           api.get('/contact')
         ]);
 
@@ -427,6 +427,19 @@ export default function LandingPage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-xs text-gray-400 font-medium mb-3">
+              Want to see more of our state-of-the-art facility?
+            </p>
+            <Link
+              to="/register"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl border border-gold-500/30 hover:border-gold-500 text-xs font-bold text-gold-500 hover:bg-gold-500/5 transition-all duration-300 uppercase tracking-widest"
+            >
+              Register to See More Images
+              <FiArrowRight />
+            </Link>
           </div>
         </div>
       </section>
