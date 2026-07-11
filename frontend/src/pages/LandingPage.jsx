@@ -33,7 +33,7 @@ export default function LandingPage() {
         const [plansRes, supRes, galRes, contactRes] = await Promise.allSettled([
           api.get('/plans'),
           api.get('/supplements?limit=3'),
-          api.get('/gallery?limit=6'),
+          api.get('/gallery'),
           api.get('/contact')
         ]);
 
