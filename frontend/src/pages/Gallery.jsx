@@ -73,27 +73,37 @@ export default function Gallery() {
         ))}
       </div>
 
-      {/* Masonry image grid */}
+      {/* Grid image list */}
       {loading ? (
         <div className="glass-panel p-8 rounded-2xl border border-white/5 flex items-center justify-center min-h-[300px]">
           <div className="w-10 h-10 border-4 border-t-gold-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
         </div>
       ) : galleryList.length > 0 ? (
-        <div className="columns-1 sm:columns-2 md:columns-3 gap-6 space-y-6">
-          {galleryList.map((img) => (
-            <div
-              key={img._id}
-              onClick={() => setActiveImage(img)}
-              className="break-inside-avoid rounded-2xl overflow-hidden border border-white/5 relative group cursor-pointer shadow-lg hover:border-gold-500/20 transition-all duration-300"
-            >
-              <img src={img.imageUrl} alt={img.caption} className="w-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
-                <span className="text-[9px] uppercase font-bold text-gold-500 mb-1">{img.category}</span>
-                <h4 className="text-xs font-semibold text-white uppercase truncate">{img.caption || 'Sunrise Showcase'}</h4>
-                <FiMaximize2 className="text-white text-base absolute top-5 right-5" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {[...galleryList]
+            .sort((a, b) => {
+              const priority = { 'Gym': 1, 'Machines': 2, 'Workout Area': 3, 'Transformations': 4, 'Events': 5 };
+              const priorityA = priority[a.category] || 99;
+              const priorityB = priority[b.category] || 99;
+              if (priorityA !== priorityB) return priorityA - priorityB;
+              return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+            })
+            .map((img) => (
+              <div
+                key={img._id}
+                onClick={() => setActiveImage(img)}
+                className="aspect-square rounded-2xl overflow-hidden border border-white/5 relative group cursor-pointer shadow-lg hover:border-gold-500/20 transition-all duration-300"
+              >
+                <img src={img.imageUrl} alt={img.caption} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5 text-left">
+                  <span className="self-start px-2 py-0.5 rounded bg-gold-500 text-black text-[9px] uppercase tracking-wider font-extrabold mb-1">
+                    {img.category}
+                  </span>
+                  <h4 className="text-xs font-semibold text-white uppercase truncate">{img.caption || 'Sunrise Showcase'}</h4>
+                  <FiMaximize2 className="text-white text-base absolute top-5 right-5" />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       ) : (
         <div className="glass-panel p-8 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center py-12">
