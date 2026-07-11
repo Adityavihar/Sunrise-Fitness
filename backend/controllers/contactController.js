@@ -17,11 +17,21 @@ const getContactConfig = async (req, res) => {
         googleMapsLink: 'https://maps.google.com',
         openingHours: 'Mon-Sat: 5:00 AM - 10:00 PM, Sun: 6:00 AM - 12:00 PM',
         socialMedia: {
-          instagram: 'https://instagram.com/sunrise_fitness',
+          instagram: 'https://www.instagram.com/sunrise_fitness_hub?igsh=Y3U3YWc2Ymh3enYz',
           facebook: 'https://facebook.com/sunrise_fitness',
           youtube: 'https://youtube.com/sunrise_fitness'
         }
       });
+    } else {
+      // Auto-migrate old default or empty placeholder to correct Instagram URL
+      const currentInsta = config.socialMedia?.instagram || '';
+      if (!currentInsta || currentInsta.includes('instagram.com/sunrise_fitness') || currentInsta === 'https://instagram.com' || currentInsta === 'https://instagram.com/') {
+        if (!config.socialMedia) {
+          config.socialMedia = {};
+        }
+        config.socialMedia.instagram = 'https://www.instagram.com/sunrise_fitness_hub?igsh=Y3U3YWc2Ymh3enYz';
+        await config.save();
+      }
     }
 
     res.status(200).json({ success: true, config });

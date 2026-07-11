@@ -111,7 +111,7 @@ export default function LandingPage() {
     whatsapp: '9299999288',
     googleMapsLink: 'https://maps.google.com',
     openingHours: 'Mon-Sat: 5:00 AM - 10:00 PM, Sun: 6:00 AM - 12:00 PM',
-    socialMedia: { instagram: '', facebook: '', youtube: '' }
+    socialMedia: { instagram: 'https://www.instagram.com/sunrise_fitness_hub?igsh=Y3U3YWc2Ymh3enYz', facebook: '', youtube: '' }
   };
 
   const handleJoinClick = (plan) => {
@@ -615,7 +615,7 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="flex gap-4">
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-gold-500 transition-colors">
+            <a href={contacts.socialMedia?.instagram || "https://www.instagram.com/sunrise_fitness_hub?igsh=Y3U3YWc2Ymh3enYz"} target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-gold-500 transition-colors">
               <FiInstagram />
             </a>
             <a href="https://facebook.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-gold-500 transition-colors">

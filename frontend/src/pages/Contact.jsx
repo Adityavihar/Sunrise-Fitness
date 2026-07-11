@@ -59,7 +59,7 @@ export default function Contact() {
     whatsapp: '9299999288',
     googleMapsLink: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3811.8354966699313!2d82.502804!3d17.279612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a39f60d3d5fbfab%3A0xe54bb39f67aee186!2sAnnavaram%2C%20Andhra%20Pradesh%20533406!5e0!3m2!1sen!2sin!4v1680000000000!5m2!1sen!2sin',
     openingHours: 'Mon-Sat: 5:00 AM - 10:00 PM, Sun: 6:00 AM - 12:00 PM',
-    socialMedia: { instagram: '', facebook: '', youtube: '' }
+    socialMedia: { instagram: 'https://www.instagram.com/sunrise_fitness_hub?igsh=Y3U3YWc2Ymh3enYz', facebook: '', youtube: '' }
   };
 
   // Convert link to embed link if standard google maps link
@@ -125,7 +125,7 @@ export default function Contact() {
           <div>
             <span className="text-[9px] uppercase font-bold text-gray-500">Follow us on Socials</span>
             <div className="flex gap-3 mt-2">
-              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-gold-500 transition-colors">
+              <a href={contacts.socialMedia?.instagram || "https://www.instagram.com/sunrise_fitness_hub?igsh=Y3U3YWc2Ymh3enYz"} target="_blank" rel="noreferrer" className="w-8 h-8 rounded bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-gold-500 transition-colors">
                 <FiInstagram />
               </a>
               <a href="https://facebook.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-gold-500 transition-colors">
