@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
+import { compressImage } from '../utils/imageCompressor';
 import { FiSettings, FiCheckCircle, FiCamera, FiUpload } from 'react-icons/fi';
 
 export default function AdminContact() {
@@ -66,6 +67,15 @@ export default function AdminContact() {
     e.preventDefault();
     setUpdating(true);
 
+    let finalQrFile = qrFile;
+    if (qrFile && qrFile.size > 150 * 1024) {
+      try {
+        finalQrFile = await compressImage(qrFile, 1200, 1200, 0.85);
+      } catch (err) {
+        console.error('QR code image compression failed:', err);
+      }
+    }
+
     const data = new FormData();
     data.append('address', formData.address);
     data.append('phone', formData.phone);
@@ -77,8 +87,8 @@ export default function AdminContact() {
     data.append('facebook', formData.facebook);
     data.append('youtube', formData.youtube);
 
-    if (qrFile) {
-      data.append('qrCode', qrFile);
+    if (finalQrFile) {
+      data.append('qrCode', finalQrFile);
     }
 
     try {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
+import { compressImage } from '../utils/imageCompressor';
 import { FiPlus, FiTrash2, FiX, FiCamera, FiUpload, FiInfo } from 'react-icons/fi';
 
 export default function AdminGallery() {
@@ -49,10 +50,19 @@ export default function AdminGallery() {
     }
 
     setUploading(true);
+    let finalFile = fileObject;
+    if (fileObject.size > 150 * 1024) { // Compress images above 150KB to optimize bandwidth
+      try {
+        finalFile = await compressImage(fileObject, 1200, 1200, 0.85);
+      } catch (err) {
+        console.error('Image compression failed:', err);
+      }
+    }
+
     const formData = new FormData();
     formData.append('category', category);
     formData.append('caption', caption);
-    formData.append('image', fileObject);
+    formData.append('image', finalFile);
 
     try {
       const res = await api.post('/gallery', formData, {

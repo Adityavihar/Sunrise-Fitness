@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
-import { FiPlus, FiEdit, FiTrash2, FiX, FiCamera, FiSearch, FiInfo } from 'react-icons/fi';
+import { compressImage } from '../utils/imageCompressor';
+import { FiPlus, FiEdit, FiTrash2, FiX, FiCheck, FiInfo, FiUpload, FiCamera, FiSearch } from 'react-icons/fi';
 
 export default function AdminSupplements() {
   const { addToast } = useToast();
@@ -96,6 +97,15 @@ export default function AdminSupplements() {
       return;
     }
 
+    let finalFile = fileObject;
+    if (fileObject && fileObject.size > 150 * 1024) {
+      try {
+        finalFile = await compressImage(fileObject, 1200, 1200, 0.85);
+      } catch (err) {
+        console.error('Supplement product image compression failed:', err);
+      }
+    }
+
     const payload = new FormData();
     payload.append('name', formData.name);
     payload.append('category', formData.category);
@@ -103,8 +113,8 @@ export default function AdminSupplements() {
     payload.append('price', formData.price);
     payload.append('stock', formData.stock);
 
-    if (fileObject) {
-      payload.append('image', fileObject);
+    if (finalFile) {
+      payload.append('image', finalFile);
     }
 
     try {
