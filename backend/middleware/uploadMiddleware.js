@@ -37,17 +37,9 @@ if (
   isCloudinaryConfigured = true;
   console.log('Cloudinary upload storage configured successfully.');
 } else {
-  // Local storage fallback
-  storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, uploadsDir);
-    },
-    filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-    }
-  });
-  console.log('Cloudinary credentials missing. Falling back to local storage uploads.');
+  // Memory storage fallback to convert to base64 (permanent database storage)
+  storage = multer.memoryStorage();
+  console.log('Cloudinary credentials missing. Falling back to memory storage base64 uploads.');
 }
 
 const fileFilter = (req, file, cb) => {
@@ -72,14 +64,20 @@ const getFileUrl = (file, req) => {
   if (isCloudinaryConfigured) {
     return file.path; // Cloudinary returns URL in file.path
   } else {
-    // Return relative URL to local asset
+    // Return base64 data URL to store the image permanently in MongoDB Atlas
     try {
+      if (file.buffer) {
+        const base64Data = file.buffer.toString('base64');
+        return `data:${file.mimetype || 'image/jpeg'};base64,${base64Data}`;
+      }
+      
+      // Fallback if buffer is missing but file is on disk
       const host = req && typeof req.get === 'function' ? req.get('host') : 'localhost:5000';
       const protocol = req && req.protocol ? req.protocol : 'http';
       return `${protocol}://${host}/uploads/${file.filename}`;
     } catch (err) {
       console.error('Error generating file URL:', err.message);
-      return `/uploads/${file.filename}`;
+      return file.filename ? `/uploads/${file.filename}` : '';
     }
   }
 };
