@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { FiUser, FiMail, FiPhone, FiInfo, FiCamera, FiCheckCircle } from 'react-icons/fi';
+import { compressImage } from '../utils/imageCompressor';
 
 export default function Profile() {
   const { user, updateProfile } = useAuth();
@@ -30,8 +31,8 @@ export default function Profile() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        addToast('File size must be under 5MB', 'error');
+      if (file.size > 25 * 1024 * 1024) {
+        addToast('File size must be under 25MB', 'error');
         return;
       }
       setFileObject(file);
@@ -41,6 +42,15 @@ export default function Profile() {
 
   const onSubmit = async (data) => {
     setLoading(true);
+    let finalFile = fileObject;
+    if (fileObject && fileObject.size > 150 * 1024) {
+      try {
+        finalFile = await compressImage(fileObject, 800, 800, 0.8);
+      } catch (err) {
+        console.error('Profile picture compression failed:', err);
+      }
+    }
+
     const formData = new FormData();
     formData.append('name', data.name);
     formData.append('email', data.email);
@@ -50,8 +60,8 @@ export default function Profile() {
     formData.append('height', data.height);
     formData.append('weight', data.weight);
 
-    if (fileObject) {
-      formData.append('profilePicture', fileObject);
+    if (finalFile) {
+      formData.append('profilePicture', finalFile);
     }
 
     const result = await updateProfile(user._id, formData);
