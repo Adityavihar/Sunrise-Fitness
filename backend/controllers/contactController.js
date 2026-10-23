@@ -1,6 +1,6 @@
 const ContactConfig = require('../models/ContactConfig');
 
-const DEFAULT_MAPS_LINK = 'https://www.google.com/maps/dir//SUNRISE+FITNESS+HUB,+79GW%2B4WH,+Annavaram+Colony,+Bendapudi,+Andhra+Pradesh+533406/@17.2753148,82.3973547,15z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3a39cf00101fe5fd:0x3f84b3ba0e608f36!2m2!1d82.3973547!2d17.2753148';
+const DEFAULT_MAPS_LINK = 'https://www.google.com/maps/place/SUNRISE+FITNESS+HUB/@17.2753148,82.3973547,17z/data=!3m1!4b1!4m6!3m5!1s0x3a39cf00101fe5fd:0x3f84b3ba0e608f36!8m2!3d17.2753148!4d82.3973547';
 
 // @desc    Get contact configuration details
 // @route   GET /api/contact
@@ -36,9 +36,9 @@ const getContactConfig = async (req, res) => {
         modified = true;
       }
 
-      // Auto-migrate old default or generic maps link to the exact Sunrise Fitness Hub location
+      // Auto-migrate old default or generic/directions maps link to the exact Sunrise Fitness Hub place location
       const currentMaps = config.googleMapsLink || '';
-      if (!currentMaps || currentMaps === 'https://maps.google.com' || currentMaps === 'https://maps.google.com/' || currentMaps === 'https://www.google.com/maps' || currentMaps === 'https://www.google.com/maps/') {
+      if (!currentMaps || currentMaps.includes('/dir//') || currentMaps === 'https://maps.google.com' || currentMaps === 'https://maps.google.com/' || currentMaps === 'https://www.google.com/maps' || currentMaps === 'https://www.google.com/maps/' || currentMaps.includes('Annavaram%2C%20Andhra%20Pradesh%20533406')) {
         config.googleMapsLink = DEFAULT_MAPS_LINK;
         modified = true;
       }

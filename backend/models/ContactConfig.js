@@ -20,7 +20,7 @@ const contactConfigSchema = new mongoose.Schema(
     },
     googleMapsLink: {
       type: String,
-      default: 'https://www.google.com/maps/dir//SUNRISE+FITNESS+HUB,+79GW%2B4WH,+Annavaram+Colony,+Bendapudi,+Andhra+Pradesh+533406/@17.2753148,82.3973547,15z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3a39cf00101fe5fd:0x3f84b3ba0e608f36!2m2!1d82.3973547!2d17.2753148'
+      default: 'https://www.google.com/maps/place/SUNRISE+FITNESS+HUB/@17.2753148,82.3973547,17z/data=!3m1!4b1!4m6!3m5!1s0x3a39cf00101fe5fd:0x3f84b3ba0e608f36!8m2!3d17.2753148!4d82.3973547'
     },
     openingHours: {
       type: String,

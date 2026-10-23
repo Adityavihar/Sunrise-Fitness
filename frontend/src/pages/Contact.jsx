@@ -52,13 +52,27 @@ export default function Contact() {
     }
   };
 
-  const DEFAULT_MAP_DIRECTIONS = 'https://www.google.com/maps/dir//SUNRISE+FITNESS+HUB,+79GW%2B4WH,+Annavaram+Colony,+Bendapudi,+Andhra+Pradesh+533406/@17.2753148,82.3973547,15z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3a39cf00101fe5fd:0x3f84b3ba0e608f36!2m2!1d82.3973547!2d17.2753148';
+  const SUNRISE_PLACE_URL = 'https://www.google.com/maps/place/SUNRISE+FITNESS+HUB/@17.2753148,82.3973547,17z/data=!3m1!4b1!4m6!3m5!1s0x3a39cf00101fe5fd:0x3f84b3ba0e608f36!8m2!3d17.2753148!4d82.3973547';
 
   const DEFAULT_MAP_EMBED = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3811.8847043812836!2d82.39477977598813!3d17.275314783592186!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a39cf00101fe5fd%3A0x3f84b3ba0e608f36!2sSUNRISE%20FITNESS%20HUB!5e0!3m2!1sen!2sin!4v1729700000000!5m2!1sen!2sin';
+
+  const getDirectPlaceUrl = (url) => {
+    if (!url) return SUNRISE_PLACE_URL;
+    if (url.includes('SUNRISE') || url.includes('0x3a39cf00101fe5fd') || url.includes('4576980733001764662')) {
+      return SUNRISE_PLACE_URL;
+    }
+    if (url === 'https://maps.google.com' || url === 'https://maps.google.com/' || url === 'https://www.google.com/maps' || url === 'https://www.google.com/maps/') {
+      return SUNRISE_PLACE_URL;
+    }
+    return url;
+  };
 
   const getEmbedMapSrc = (url) => {
     if (!url) return DEFAULT_MAP_EMBED;
     if (url.includes('embed')) return url;
+    if (url.includes('SUNRISE') || url.includes('0x3a39cf00101fe5fd') || url.includes('4576980733001764662')) {
+      return DEFAULT_MAP_EMBED;
+    }
     if (url === 'https://maps.google.com' || url === 'https://maps.google.com/' || url === 'https://www.google.com/maps' || url === 'https://www.google.com/maps/') {
       return DEFAULT_MAP_EMBED;
     }
@@ -92,15 +106,13 @@ export default function Contact() {
     phone: '9299999288',
     email: 'contact@sunrisefitnesshub.com',
     whatsapp: '9299999288',
-    googleMapsLink: DEFAULT_MAP_DIRECTIONS,
+    googleMapsLink: SUNRISE_PLACE_URL,
     openingHours: 'Mon-Sat: 5:00 AM - 10:00 PM, Sun: 6:00 AM - 12:00 PM',
     socialMedia: { instagram: 'https://www.instagram.com/sunrise_fitness_hub?igsh=Y3U3YWc2Ymh3enYz', facebook: '', youtube: '' }
   };
 
   const mapSrc = getEmbedMapSrc(contacts.googleMapsLink);
-  const directMapUrl = (contacts.googleMapsLink && contacts.googleMapsLink !== 'https://maps.google.com' && contacts.googleMapsLink !== 'https://maps.google.com/')
-    ? contacts.googleMapsLink
-    : DEFAULT_MAP_DIRECTIONS;
+  const directMapUrl = getDirectPlaceUrl(contacts.googleMapsLink);
 
   return (
     <div className="flex flex-col gap-8">
@@ -131,9 +143,9 @@ export default function Contact() {
                   href={directMapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[10px] text-gold-500 hover:text-white font-semibold mt-1 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs text-gold-500 hover:text-white font-semibold mt-1.5 transition-colors"
                 >
-                  <FiExternalLink /> View on Google Maps
+                  <FiMapPin /> Locate Sunrise Fitness Hub on Google Maps
                 </a>
               </div>
             </div>
@@ -198,10 +210,11 @@ export default function Contact() {
               href={directMapUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="absolute top-3 right-3 px-3 py-1.5 bg-black/85 hover:bg-gold-500 hover:text-black text-white text-[11px] font-bold rounded-lg border border-white/10 transition-all flex items-center gap-1.5 shadow-lg backdrop-blur-sm cursor-pointer z-10"
+              className="absolute top-3 right-3 px-3.5 py-2 bg-black/90 hover:bg-gold-500 hover:text-black text-white text-xs font-bold rounded-xl border border-white/10 transition-all flex items-center gap-1.5 shadow-xl backdrop-blur-md cursor-pointer z-10"
             >
-              <FiExternalLink className="text-sm" />
-              <span>Get Directions</span>
+              <FiMapPin className="text-gold-500 text-sm" />
+              <span>Locate Sunrise Fitness Hub</span>
+              <FiExternalLink className="text-[10px] opacity-75" />
             </a>
           </div>
 
