@@ -126,6 +126,9 @@ export default function Payment() {
   // Helper to dynamically resolve local image host in case of port/IP mismatch
   const resolveImageUrl = (url) => {
     if (!url) return '';
+    if (url.startsWith('data:')) {
+      return url;
+    }
     if (url.startsWith('http://') || url.startsWith('https://')) {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
       const backendBase = API_URL.replace('/api', '');
@@ -133,15 +136,30 @@ export default function Payment() {
         const pathPart = url.substring(url.indexOf('/uploads/'));
         return `${backendBase}${pathPart}`;
       }
+      return url;
+    }
+    if (url.startsWith('/uploads/')) {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const backendBase = API_URL.replace('/api', '');
+      return `${backendBase}${url}`;
     }
     return url;
   };
 
-  const qrImageSrc = (contacts && contacts.qrCode)
-    ? `${resolveImageUrl(contacts.qrCode)}?v=${contacts.updatedAt ? new Date(contacts.updatedAt).getTime() : Date.now()}`
-    : (selectedPlan
+  const getQrImageSrc = () => {
+    if (contacts && contacts.qrCode) {
+      const resolved = resolveImageUrl(contacts.qrCode);
+      if (resolved.startsWith('data:')) {
+        return resolved;
+      }
+      return `${resolved}?v=${contacts.updatedAt ? new Date(contacts.updatedAt).getTime() : Date.now()}`;
+    }
+    return selectedPlan
       ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(generateUpiString())}`
-      : '');
+      : '';
+  };
+
+  const qrImageSrc = getQrImageSrc();
 
   // Clean iframe receipt printer
   const printReceipt = (payment) => {
@@ -260,11 +278,20 @@ export default function Payment() {
                 {selectedPlan ? (
                   <>
                     <div className="p-3 bg-white rounded-xl shadow-lg inline-block border-4 border-gold-500/20">
-                      <img src={qrImageSrc} alt="UPI QR" className="w-48 h-48 object-contain" />
+                      <img
+                        src={qrImageSrc}
+                        alt="UPI QR"
+                        className="w-48 h-48 object-contain"
+                        onError={(e) => {
+                          const fallback = selectedPlan
+                            ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(generateUpiString())}`
+                            : '';
+                          if (fallback && e.target.src !== fallback) {
+                            e.target.src = fallback;
+                          }
+                        }}
+                      />
                     </div>
-                    <span className="text-[9px] text-gray-500 break-all mt-2 max-w-[200px] block">
-                      Source: {qrImageSrc || 'None'}
-                    </span>
                     <p className="text-xs font-semibold text-white mt-4 uppercase">
                       Scan to pay <span className="text-gold-500">₹{selectedPlan.price}</span>
                     </p>
