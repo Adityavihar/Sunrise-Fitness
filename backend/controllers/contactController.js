@@ -1,5 +1,7 @@
 const ContactConfig = require('../models/ContactConfig');
 
+const DEFAULT_MAPS_LINK = 'https://www.google.com/maps/dir//SUNRISE+FITNESS+HUB,+79GW%2B4WH,+Annavaram+Colony,+Bendapudi,+Andhra+Pradesh+533406/@17.2753148,82.3973547,15z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3a39cf00101fe5fd:0x3f84b3ba0e608f36!2m2!1d82.3973547!2d17.2753148';
+
 // @desc    Get contact configuration details
 // @route   GET /api/contact
 // @access  Public
@@ -14,7 +16,7 @@ const getContactConfig = async (req, res) => {
         phone: '9299999288',
         email: 'contact@sunrisefitnesshub.com',
         whatsapp: '9299999288',
-        googleMapsLink: 'https://maps.google.com',
+        googleMapsLink: DEFAULT_MAPS_LINK,
         openingHours: 'Mon-Sat: 5:00 AM - 10:00 PM, Sun: 6:00 AM - 12:00 PM',
         socialMedia: {
           instagram: 'https://www.instagram.com/sunrise_fitness_hub?igsh=Y3U3YWc2Ymh3enYz',
@@ -23,6 +25,7 @@ const getContactConfig = async (req, res) => {
         }
       });
     } else {
+      let modified = false;
       // Auto-migrate old default or empty placeholder to correct Instagram URL
       const currentInsta = config.socialMedia?.instagram || '';
       if (!currentInsta || currentInsta.includes('instagram.com/sunrise_fitness') || currentInsta === 'https://instagram.com' || currentInsta === 'https://instagram.com/') {
@@ -30,6 +33,17 @@ const getContactConfig = async (req, res) => {
           config.socialMedia = {};
         }
         config.socialMedia.instagram = 'https://www.instagram.com/sunrise_fitness_hub?igsh=Y3U3YWc2Ymh3enYz';
+        modified = true;
+      }
+
+      // Auto-migrate old default or generic maps link to the exact Sunrise Fitness Hub location
+      const currentMaps = config.googleMapsLink || '';
+      if (!currentMaps || currentMaps === 'https://maps.google.com' || currentMaps === 'https://maps.google.com/' || currentMaps === 'https://www.google.com/maps' || currentMaps === 'https://www.google.com/maps/') {
+        config.googleMapsLink = DEFAULT_MAPS_LINK;
+        modified = true;
+      }
+
+      if (modified) {
         await config.save();
       }
     }

@@ -3,7 +3,7 @@ import api from '../services/api';
 import { useToast } from '../context/ToastContext';
 import {
   FiMapPin, FiPhone, FiMail, FiClock, FiActivity,
-  FiInstagram, FiFacebook, FiYoutube, FiMessageSquare
+  FiInstagram, FiFacebook, FiYoutube, FiMessageSquare, FiExternalLink
 } from 'react-icons/fi';
 
 export default function Contact() {
@@ -52,20 +52,55 @@ export default function Contact() {
     }
   };
 
+  const DEFAULT_MAP_DIRECTIONS = 'https://www.google.com/maps/dir//SUNRISE+FITNESS+HUB,+79GW%2B4WH,+Annavaram+Colony,+Bendapudi,+Andhra+Pradesh+533406/@17.2753148,82.3973547,15z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3a39cf00101fe5fd:0x3f84b3ba0e608f36!2m2!1d82.3973547!2d17.2753148';
+
+  const DEFAULT_MAP_EMBED = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3811.8847043812836!2d82.39477977598813!3d17.275314783592186!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a39cf00101fe5fd%3A0x3f84b3ba0e608f36!2sSUNRISE%20FITNESS%20HUB!5e0!3m2!1sen!2sin!4v1729700000000!5m2!1sen!2sin';
+
+  const getEmbedMapSrc = (url) => {
+    if (!url) return DEFAULT_MAP_EMBED;
+    if (url.includes('embed')) return url;
+    if (url === 'https://maps.google.com' || url === 'https://maps.google.com/' || url === 'https://www.google.com/maps' || url === 'https://www.google.com/maps/') {
+      return DEFAULT_MAP_EMBED;
+    }
+
+    const coordMatch1 = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    const coordMatch2 = url.match(/!3d(-?\d+\.\d+)!2d(-?\d+\.\d+)/);
+    const coordMatch3 = url.match(/!2d(-?\d+\.\d+)!3d(-?\d+\.\d+)/);
+    const coordMatch4 = url.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+
+    if (coordMatch3) {
+      return `https://maps.google.com/maps?q=${coordMatch3[2]},${coordMatch3[1]}&hl=en&z=16&output=embed`;
+    } else if (coordMatch2) {
+      return `https://maps.google.com/maps?q=${coordMatch2[1]},${coordMatch2[2]}&hl=en&z=16&output=embed`;
+    } else if (coordMatch1) {
+      return `https://maps.google.com/maps?q=${coordMatch1[1]},${coordMatch1[2]}&hl=en&z=16&output=embed`;
+    } else if (coordMatch4) {
+      return `https://maps.google.com/maps?q=${coordMatch4[1]},${coordMatch4[2]}&hl=en&z=16&output=embed`;
+    }
+
+    const placeMatch = url.match(/maps\/(?:dir\/|place\/)([^/@?]+)/);
+    if (placeMatch && placeMatch[1]) {
+      const cleanPlace = placeMatch[1].replace(/\+/g, ' ');
+      return `https://maps.google.com/maps?q=${encodeURIComponent(cleanPlace)}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+    }
+
+    return DEFAULT_MAP_EMBED;
+  };
+
   const contacts = config || {
     address: 'Kapilivaivari Street, infront of Seshadri Sadan, Annavarm, 533406',
     phone: '9299999288',
     email: 'contact@sunrisefitnesshub.com',
     whatsapp: '9299999288',
-    googleMapsLink: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3811.8354966699313!2d82.502804!3d17.279612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a39f60d3d5fbfab%3A0xe54bb39f67aee186!2sAnnavaram%2C%20Andhra%20Pradesh%20533406!5e0!3m2!1sen!2sin!4v1680000000000!5m2!1sen!2sin',
+    googleMapsLink: DEFAULT_MAP_DIRECTIONS,
     openingHours: 'Mon-Sat: 5:00 AM - 10:00 PM, Sun: 6:00 AM - 12:00 PM',
     socialMedia: { instagram: 'https://www.instagram.com/sunrise_fitness_hub?igsh=Y3U3YWc2Ymh3enYz', facebook: '', youtube: '' }
   };
 
-  // Convert link to embed link if standard google maps link
-  const mapSrc = contacts.googleMapsLink && contacts.googleMapsLink.includes('embed')
+  const mapSrc = getEmbedMapSrc(contacts.googleMapsLink);
+  const directMapUrl = (contacts.googleMapsLink && contacts.googleMapsLink !== 'https://maps.google.com' && contacts.googleMapsLink !== 'https://maps.google.com/')
     ? contacts.googleMapsLink
-    : 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3811.8354966699313!2d82.502804!3d17.279612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a39f60d3d5fbfab%3A0xe54bb39f67aee186!2sAnnavaram%2C%20Andhra%20Pradesh%20533406!5e0!3m2!1sen!2sin!4v1680000000000!5m2!1sen!2sin';
+    : DEFAULT_MAP_DIRECTIONS;
 
   return (
     <div className="flex flex-col gap-8">
@@ -92,6 +127,14 @@ export default function Contact() {
               <div>
                 <span className="text-[9px] uppercase font-bold text-gray-500">Physical Address</span>
                 <p className="text-xs text-white leading-relaxed mt-0.5">{contacts.address}</p>
+                <a
+                  href={directMapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[10px] text-gold-500 hover:text-white font-semibold mt-1 transition-colors"
+                >
+                  <FiExternalLink /> View on Google Maps
+                </a>
               </div>
             </div>
 
@@ -141,7 +184,7 @@ export default function Contact() {
         {/* Map and Form (2 cols) */}
         <div className="lg:col-span-2 flex flex-col gap-6">
           {/* Map */}
-          <div className="glass-panel overflow-hidden rounded-2xl border border-white/5 h-64 shadow-lg relative">
+          <div className="glass-panel overflow-hidden rounded-2xl border border-white/5 h-64 shadow-lg relative group">
             <iframe
               src={mapSrc}
               width="100%"
@@ -151,6 +194,15 @@ export default function Contact() {
               loading="lazy"
               title="Gym Map location"
             ></iframe>
+            <a
+              href={directMapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute top-3 right-3 px-3 py-1.5 bg-black/85 hover:bg-gold-500 hover:text-black text-white text-[11px] font-bold rounded-lg border border-white/10 transition-all flex items-center gap-1.5 shadow-lg backdrop-blur-sm cursor-pointer z-10"
+            >
+              <FiExternalLink className="text-sm" />
+              <span>Get Directions</span>
+            </a>
           </div>
 
           {/* Contact Inquiry form */}

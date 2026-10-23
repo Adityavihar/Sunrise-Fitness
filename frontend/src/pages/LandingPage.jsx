@@ -109,7 +109,7 @@ export default function LandingPage() {
     phone: '9299999288',
     email: 'contact@sunrisefitnesshub.com',
     whatsapp: '9299999288',
-    googleMapsLink: 'https://maps.google.com',
+    googleMapsLink: 'https://www.google.com/maps/dir//SUNRISE+FITNESS+HUB,+79GW%2B4WH,+Annavaram+Colony,+Bendapudi,+Andhra+Pradesh+533406/@17.2753148,82.3973547,15z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3a39cf00101fe5fd:0x3f84b3ba0e608f36!2m2!1d82.3973547!2d17.2753148',
     openingHours: 'Mon-Sat: 5:00 AM - 10:00 PM, Sun: 6:00 AM - 12:00 PM',
     socialMedia: { instagram: 'https://www.instagram.com/sunrise_fitness_hub?igsh=Y3U3YWc2Ymh3enYz', facebook: '', youtube: '' }
   };
@@ -497,7 +497,14 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-white uppercase tracking-wider">Gym Address</h4>
-                  <p className="text-xs text-gray-400 mt-1 leading-relaxed">{contacts.address}</p>
+                  <a
+                    href={contacts.googleMapsLink || 'https://www.google.com/maps/dir//SUNRISE+FITNESS+HUB,+79GW%2B4WH,+Annavaram+Colony,+Bendapudi,+Andhra+Pradesh+533406/@17.2753148,82.3973547,15z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3a39cf00101fe5fd:0x3f84b3ba0e608f36!2m2!1d82.3973547!2d17.2753148'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-gray-400 hover:text-gold-500 mt-1 leading-relaxed block transition-colors"
+                  >
+                    {contacts.address}
+                  </a>
                 </div>
               </div>
 
