@@ -1,10 +1,15 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Protect routes - verify access token cookie
+// Protect routes - verify access token cookie or Authorization Bearer header
 const protect = async (req, res, next) => {
   try {
-    const token = req.cookies.accessToken;
+    let token = req.cookies?.accessToken;
+
+    // Fallback to Authorization: Bearer <token> header (essential for iOS Safari cross-site cookie restrictions)
+    if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
 
     if (!token) {
       return res.status(401).json({ success: false, message: 'Not authorized, please log in' });

@@ -73,8 +73,8 @@ const getDashboardStats = async (req, res) => {
     });
 
     const planDistribution = planDistributionRaw.map(item => ({
-      name: plansMap[item._id.toString()] || 'Unknown Plan',
-      value: item.value
+      name: item && item._id ? (plansMap[item._id.toString()] || 'Unknown Plan') : 'General Membership',
+      value: item ? item.value : 0
     }));
 
     // 5. Daily Registrations (Last 7 Days)

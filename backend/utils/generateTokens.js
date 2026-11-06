@@ -20,7 +20,7 @@ const sendTokenResponse = async (user, statusCode, res) => {
   user.refreshToken = refreshToken;
   await user.save();
 
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV && process.env.NODE_ENV.trim() === 'production';
 
   // Access Token Cookie (Expires in 15 minutes)
   const accessCookieOptions = {
@@ -43,6 +43,8 @@ const sendTokenResponse = async (user, statusCode, res) => {
 
   res.status(statusCode).json({
     success: true,
+    accessToken,
+    refreshToken,
     user: {
       _id: user._id,
       name: user.name,

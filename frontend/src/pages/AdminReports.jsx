@@ -35,7 +35,9 @@ export default function AdminReports() {
       }
     } catch (err) {
       console.error(err);
-      addToast('Failed to retrieve reports data.', 'error');
+      if (err.response?.status !== 401) {
+        addToast('Failed to retrieve reports data.', 'error');
+      }
     } finally {
       setLoading(false);
     }

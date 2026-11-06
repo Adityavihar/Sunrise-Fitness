@@ -44,7 +44,9 @@ export default function AdminDashboard() {
       }
     } catch (err) {
       console.error(err);
-      addToast('Failed to compile dashboard reports.', 'error');
+      if (err.response?.status !== 401) {
+        addToast('Failed to compile dashboard reports.', 'error');
+      }
     } finally {
       setLoading(false);
     }

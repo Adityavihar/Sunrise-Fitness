@@ -37,7 +37,7 @@ app.use(cors({
   origin: allowedOrigin,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'x-refresh-token']
 }));
 
 // Rate Limiting (Only applied in production mode to avoid local testing blocks)

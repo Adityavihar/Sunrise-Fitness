@@ -121,7 +121,7 @@ const loginUser = async (req, res) => {
 // @access  Public
 const refreshToken = async (req, res) => {
   try {
-    const refreshCookie = req.cookies.refreshToken;
+    const refreshCookie = req.cookies?.refreshToken || req.body?.refreshToken || req.headers['x-refresh-token'];
 
     if (!refreshCookie) {
       return res.status(401).json({ success: false, message: 'No refresh token provided' });
@@ -144,7 +144,7 @@ const refreshToken = async (req, res) => {
         expiresIn: process.env.JWT_ACCESS_EXPIRE || '15m'
       });
 
-      const isProduction = process.env.NODE_ENV === 'production';
+      const isProduction = process.env.NODE_ENV && process.env.NODE_ENV.trim() === 'production';
       const accessCookieOptions = {
         httpOnly: true,
         secure: isProduction,
@@ -153,7 +153,7 @@ const refreshToken = async (req, res) => {
       };
 
       res.cookie('accessToken', accessToken, accessCookieOptions);
-      res.status(200).json({ success: true, message: 'Token refreshed' });
+      res.status(200).json({ success: true, message: 'Token refreshed', accessToken });
     });
   } catch (error) {
     console.error('Refresh token error:', error);
@@ -178,7 +178,7 @@ const logoutUser = async (req, res) => {
       }
     }
 
-    const refreshCookie = req.cookies.refreshToken;
+    const refreshCookie = req.cookies?.refreshToken || req.body?.refreshToken || req.headers['x-refresh-token'];
 
     if (refreshCookie) {
       // Find user and clear their refresh token
@@ -188,7 +188,7 @@ const logoutUser = async (req, res) => {
       );
     }
 
-    const isProduction = process.env.NODE_ENV === 'production';
+    const isProduction = process.env.NODE_ENV && process.env.NODE_ENV.trim() === 'production';
     const cookieOptions = {
       httpOnly: true,
       secure: isProduction,

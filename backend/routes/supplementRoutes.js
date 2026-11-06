@@ -15,7 +15,10 @@ const User = require('../models/User');
 // Custom optional-auth middleware to identify admins in product listings
 const optionalAuth = async (req, res, next) => {
   try {
-    const token = req.cookies.accessToken;
+    let token = req.cookies?.accessToken;
+    if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
       req.user = await User.findById(decoded.id).select('-password');

@@ -16,6 +16,8 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.log('No active authenticated session found.');
+      localStorage.removeItem('sunrise_access_token');
+      localStorage.removeItem('sunrise_refresh_token');
       setUser(null);
     } finally {
       setLoading(false);
@@ -28,6 +30,8 @@ export const AuthProvider = ({ children }) => {
     // Listen for custom token refresh failure events from Axios interceptors
     const handleSessionExpired = () => {
       console.log('Session expired event received. Clearing user state.');
+      localStorage.removeItem('sunrise_access_token');
+      localStorage.removeItem('sunrise_refresh_token');
       setUser(null);
     };
 
@@ -43,6 +47,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await api.post('/auth/login', { identifier, password });
       if (response.data.success) {
+        if (response.data.accessToken) {
+          localStorage.setItem('sunrise_access_token', response.data.accessToken);
+        }
+        if (response.data.refreshToken) {
+          localStorage.setItem('sunrise_refresh_token', response.data.refreshToken);
+        }
         setUser(response.data.user);
         return { success: true, user: response.data.user };
       }
@@ -80,10 +90,13 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     setLoading(true);
     try {
-      await api.post('/auth/logout');
+      const storedRefreshToken = localStorage.getItem('sunrise_refresh_token');
+      await api.post('/auth/logout', { refreshToken: storedRefreshToken });
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
+      localStorage.removeItem('sunrise_access_token');
+      localStorage.removeItem('sunrise_refresh_token');
       setUser(null);
       setLoading(false);
     }

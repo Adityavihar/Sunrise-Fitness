@@ -10,6 +10,18 @@ const api = axios.create({
   }
 });
 
+// Request interceptor to attach Bearer token if present in localStorage (critical fallback for Safari/iOS third-party cookie restrictions)
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('sunrise_access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 // Variables to handle multiple simultaneous requests during a refresh cycle
 let isRefreshing = false;
 let failedQueue = [];
@@ -43,7 +55,10 @@ api.interceptors.response.use(
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
-          .then(() => {
+          .then((token) => {
+            if (token) {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+            }
             return api(originalRequest);
           })
           .catch(err => {
@@ -55,14 +70,27 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // Attempt to rotate tokens via refresh cookie
-        await api.post('/auth/refresh');
+        // Attempt to rotate tokens via refresh cookie or stored refresh token
+        const storedRefreshToken = localStorage.getItem('sunrise_refresh_token');
+        const refreshRes = await api.post('/auth/refresh', {
+          refreshToken: storedRefreshToken
+        });
+
+        const newAccessToken = refreshRes.data?.accessToken;
+        if (newAccessToken) {
+          localStorage.setItem('sunrise_access_token', newAccessToken);
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        }
+
         isRefreshing = false;
-        processQueue(null);
+        processQueue(null, newAccessToken);
         return api(originalRequest);
       } catch (refreshError) {
         isRefreshing = false;
         processQueue(refreshError, null);
+
+        localStorage.removeItem('sunrise_access_token');
+        localStorage.removeItem('sunrise_refresh_token');
 
         // Session expired, fire custom event to let AuthContext clean up user state
         if (typeof window !== 'undefined') {
