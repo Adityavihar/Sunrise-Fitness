@@ -113,11 +113,11 @@ export default function Supplements() {
           <div className="w-10 h-10 border-4 border-t-gold-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
         </div>
       ) : products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {products.map((product) => (
             <div
               key={product._id}
-              className="glass-panel rounded-2xl p-5 border border-white/5 flex flex-col justify-between hover:border-gold-500/20 transition-all duration-300"
+              className="glass-panel rounded-2xl p-3.5 sm:p-5 border border-white/5 flex flex-col justify-between hover:border-gold-500/20 transition-all duration-300"
             >
               <div>
                 <div className="aspect-square rounded-xl bg-gym-gray overflow-hidden mb-4 relative">
@@ -164,7 +164,7 @@ export default function Supplements() {
       {/* Checkout UPI modal */}
       {checkoutProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="glass-panel max-w-sm w-full p-6 rounded-2xl border border-white/10 relative text-center">
+          <div className="glass-panel max-w-sm w-full p-5 sm:p-6 rounded-2xl border border-white/10 relative text-center max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setCheckoutProduct(null)}
               className="absolute top-4 right-4 text-gray-400 hover:text-white"

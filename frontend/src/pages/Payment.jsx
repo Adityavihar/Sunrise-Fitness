@@ -256,7 +256,7 @@ export default function Payment() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
       
       {/* Form and Scan QR (2 cols width) */}
       <div className="lg:col-span-2 flex flex-col gap-6">
@@ -266,12 +266,12 @@ export default function Payment() {
             <div className="w-10 h-10 border-4 border-t-gold-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="glass-panel p-6 sm:p-8 rounded-2xl border border-white/5">
-            <h3 className="text-base font-bold text-white uppercase tracking-widest mb-6">
+          <div className="glass-panel p-5 sm:p-8 rounded-2xl border border-white/5">
+            <h3 className="text-sm sm:text-base font-bold text-white uppercase tracking-widest mb-6">
               Membership Payment Scan
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-center">
               
               {/* Scan Box */}
               <div className="flex flex-col items-center text-center">
@@ -281,7 +281,7 @@ export default function Payment() {
                       <img
                         src={qrImageSrc}
                         alt="UPI QR"
-                        className="w-48 h-48 object-contain"
+                        className="w-40 h-40 sm:w-48 sm:h-48 object-contain"
                         onError={(e) => {
                           const fallback = selectedPlan
                             ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(generateUpiString())}`

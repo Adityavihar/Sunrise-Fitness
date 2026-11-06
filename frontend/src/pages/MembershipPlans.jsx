@@ -53,11 +53,11 @@ export default function MembershipPlans() {
           <div className="w-10 h-10 border-4 border-t-gold-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
         </div>
       ) : plans.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {plans.map((plan, idx) => (
             <div
               key={plan._id}
-              className="glass-panel p-8 rounded-2xl border border-white/5 flex flex-col justify-between relative group hover:border-gold-500/30 transition-colors duration-300"
+              className="glass-panel p-6 sm:p-8 rounded-2xl border border-white/5 flex flex-col justify-between relative group hover:border-gold-500/30 transition-colors duration-300"
             >
               {plan.durationMonths === 12 && (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gold-500 text-black text-[9px] font-black uppercase tracking-widest shadow-md">

@@ -105,3 +105,18 @@ h1, h2, h3, h4, h5, h6 {
 .animate-pulse-slow {
   animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Mobile & iOS Safari Optimizations */
+@media screen and (max-width: 768px) {
+  /* Prevent aggressive iOS Safari zoom on input focus */
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Touch-friendly taps */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}

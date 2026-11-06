@@ -49,13 +49,13 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gym-dark flex items-center justify-center relative p-6">
+    <div className="min-h-screen bg-gym-dark flex items-center justify-center relative p-4 sm:p-6">
       
       {/* Background Gradients */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gold-500/10 rounded-full blur-[100px]" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-red-600/10 rounded-full blur-[100px]" />
 
-      <div className="absolute top-8 left-8">
+      <div className="absolute top-4 left-4 sm:top-8 sm:left-8 z-20">
         <Link
           to="/"
           className="flex items-center gap-2 text-xs font-semibold text-gray-400 hover:text-white transition-colors"
@@ -66,7 +66,7 @@ export default function Login() {
       </div>
 
       {/* Login Card */}
-      <div className="w-full max-w-md glass-panel p-8 rounded-2xl border border-white/5 relative z-10">
+      <div className="w-full max-w-md glass-panel p-5 sm:p-8 rounded-2xl border border-white/5 relative z-10 mt-12 sm:mt-0">
         
         {/* Logo and header */}
         <div className="text-center mb-8">

@@ -182,7 +182,7 @@ export default function AdminPlans() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4">
           <form
             onSubmit={handleSubmit}
-            className="glass-panel max-w-md w-full p-6 sm:p-8 rounded-2xl border border-white/10 relative flex flex-col gap-4 text-left"
+            className="glass-panel max-w-md w-full p-5 sm:p-8 rounded-2xl border border-white/10 relative flex flex-col gap-4 text-left max-h-[90vh] overflow-y-auto"
           >
             <button
               type="button"

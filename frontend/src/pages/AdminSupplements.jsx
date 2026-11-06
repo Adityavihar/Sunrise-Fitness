@@ -206,7 +206,7 @@ export default function AdminSupplements() {
         </div>
       ) : products.length > 0 ? (
         <div className="glass-panel rounded-2xl border border-white/5 overflow-x-auto">
-          <table className="w-full border-collapse text-left text-xs text-gray-300">
+          <table className="w-full min-w-[650px] border-collapse text-left text-xs text-gray-300">
             <thead>
               <tr className="border-b border-white/5 bg-gym-gray/40 text-[10px] uppercase font-bold text-gray-400 tracking-wider">
                 <th className="py-4 px-6">Product Details</th>
@@ -275,7 +275,7 @@ export default function AdminSupplements() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4">
           <form
             onSubmit={handleSubmit}
-            className="glass-panel max-w-md w-full p-6 sm:p-8 rounded-2xl border border-white/10 relative flex flex-col gap-4 text-left"
+            className="glass-panel max-w-md w-full p-5 sm:p-8 rounded-2xl border border-white/10 relative flex flex-col gap-4 text-left max-h-[90vh] overflow-y-auto"
           >
             <button
               type="button"

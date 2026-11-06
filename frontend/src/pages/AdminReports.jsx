@@ -178,10 +178,10 @@ export default function AdminReports() {
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <button
             onClick={handleExportCsv}
-            className="px-5 py-2.5 rounded-xl border border-gold-500/30 hover:border-gold-500 text-xs font-bold text-gold-500 hover:bg-gold-500/5 transition-all duration-300 uppercase flex items-center gap-2 cursor-pointer"
+            className="w-full sm:w-auto justify-center px-5 py-2.5 rounded-xl border border-gold-500/30 hover:border-gold-500 text-xs font-bold text-gold-500 hover:bg-gold-500/5 transition-all duration-300 uppercase flex items-center gap-2 cursor-pointer"
           >
             <FiDownload />
             Export Audit Spreadsheet
@@ -189,7 +189,7 @@ export default function AdminReports() {
           
           <button
             onClick={handleDownloadPdf}
-            className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-xs font-bold text-white uppercase tracking-wider transition-colors duration-300 flex items-center gap-2 cursor-pointer shadow-lg shadow-red-600/25"
+            className="w-full sm:w-auto justify-center px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-xs font-bold text-white uppercase tracking-wider transition-colors duration-300 flex items-center gap-2 cursor-pointer shadow-lg shadow-red-600/25"
           >
             <FiDownload />
             Download PDF Summary

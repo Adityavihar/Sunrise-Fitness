@@ -103,6 +103,7 @@ export default function MemberLayout() {
       <div className="flex-1 px-4 flex flex-col gap-1.5 overflow-y-auto">
         <Link
           to="/"
+          onClick={() => setMobileOpen(false)}
           className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300"
         >
           <FiHome className="text-lg text-gray-500" />
@@ -117,6 +118,7 @@ export default function MemberLayout() {
             <NavLink
               key={item.path}
               to={item.path}
+              onClick={() => setMobileOpen(false)}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
                   isActive
@@ -135,7 +137,10 @@ export default function MemberLayout() {
       {/* Logout Footer */}
       <div className="px-4 mt-6">
         <button
-          onClick={handleLogout}
+          onClick={() => {
+            setMobileOpen(false);
+            handleLogout();
+          }}
           className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-500/5 transition-all duration-300"
         >
           <FiLogOut className="text-lg" />
@@ -155,26 +160,34 @@ export default function MemberLayout() {
       {/* Main Container */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header Dashboard Banner */}
-        <header className="h-20 bg-gym-gray/50 border-b border-white/5 px-6 flex items-center justify-between sticky top-0 z-30 backdrop-blur-md">
-          {/* Mobile hamburger trigger */}
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="lg:hidden text-gray-400 hover:text-white"
-          >
-            <FiMenu size={24} />
-          </button>
+        <header className="h-16 sm:h-20 bg-gym-gray/60 border-b border-white/5 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 backdrop-blur-md">
+          {/* Mobile hamburger trigger & Branding */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="lg:hidden text-gray-400 hover:text-white p-1.5 -ml-1 rounded-lg hover:bg-white/5 transition-colors"
+              aria-label="Open navigation menu"
+            >
+              <FiMenu size={22} />
+            </button>
+            <div className="flex items-center gap-2 md:hidden">
+              <span className="font-display font-black text-sm tracking-wider text-white">
+                SUNRISE <span className="text-gold-500">FITNESS</span>
+              </span>
+            </div>
+          </div>
 
           <h2 className="text-lg font-bold text-white hidden md:block tracking-wide">
             Sunrise Fitness Workspace
           </h2>
 
           {/* Right Header Panel */}
-          <div className="flex items-center gap-4 ml-auto">
+          <div className="flex items-center gap-3 sm:gap-4 ml-auto">
             {/* Notification Bell */}
             <div className="relative">
               <button
                 onClick={handleBellClick}
-                className="w-10 h-10 rounded-full border border-white/5 hover:border-gold-500/30 flex items-center justify-center text-gray-400 hover:text-white transition-colors relative"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-white/5 hover:border-gold-500/30 flex items-center justify-center text-gray-400 hover:text-white transition-colors relative"
               >
                 <FiBell size={18} />
                 {unreadNotifCount > 0 && (
@@ -193,7 +206,7 @@ export default function MemberLayout() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute right-0 mt-2 w-80 bg-gym-card border border-white/10 rounded-xl shadow-2xl z-50 p-4 max-h-[350px] overflow-y-auto"
+                      className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 max-w-sm bg-gym-card border border-white/10 rounded-2xl shadow-2xl z-50 p-4 max-h-[70vh] sm:max-h-[350px] overflow-y-auto"
                     >
                       <div className="flex justify-between items-center mb-3">
                         <h4 className="text-xs font-bold text-white uppercase tracking-wider">
@@ -234,7 +247,7 @@ export default function MemberLayout() {
                 <p className="text-xs font-semibold text-white truncate max-w-[120px]">{user?.name}</p>
                 <span className="text-[10px] text-gray-400 capitalize">{user?.role}</span>
               </div>
-              <div className="w-10 h-10 rounded-full bg-gold-500/10 border border-gold-500/30 overflow-hidden flex items-center justify-center">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gold-500/10 border border-gold-500/30 overflow-hidden flex items-center justify-center">
                 {user?.profilePicture ? (
                   <img src={user.profilePicture} alt={user.name} className="w-full h-full object-cover" />
                 ) : (
@@ -248,9 +261,66 @@ export default function MemberLayout() {
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 overflow-y-auto p-6 md:p-8">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 pb-24 lg:pb-8">
           <Outlet />
         </main>
+      </div>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-gym-gray/95 backdrop-blur-xl border-t border-white/10 px-3 py-2 flex items-center justify-around shadow-2xl">
+        <NavLink
+          to="/dashboard"
+          className={({ isActive }) =>
+            `flex flex-col items-center gap-1 text-[10px] font-semibold transition-colors ${
+              isActive ? 'text-gold-500' : 'text-gray-400 hover:text-white'
+            }`
+          }
+        >
+          <FiGrid size={18} />
+          <span>Home</span>
+        </NavLink>
+        <NavLink
+          to="/plans"
+          className={({ isActive }) =>
+            `flex flex-col items-center gap-1 text-[10px] font-semibold transition-colors ${
+              isActive ? 'text-gold-500' : 'text-gray-400 hover:text-white'
+            }`
+          }
+        >
+          <FiCreditCard size={18} />
+          <span>Plans</span>
+        </NavLink>
+        <NavLink
+          to="/payment"
+          className={({ isActive }) =>
+            `flex flex-col items-center gap-1 text-[10px] font-semibold transition-colors ${
+              isActive ? 'text-gold-500' : 'text-gray-400 hover:text-white'
+            }`
+          }
+        >
+          <div className="w-10 h-10 -mt-5 rounded-full bg-gold-500 flex items-center justify-center text-gym-dark shadow-lg shadow-gold-500/30 border-2 border-gym-gray">
+            <FiCreditCard size={18} />
+          </div>
+          <span>Pay</span>
+        </NavLink>
+        <NavLink
+          to="/profile"
+          className={({ isActive }) =>
+            `flex flex-col items-center gap-1 text-[10px] font-semibold transition-colors ${
+              isActive ? 'text-gold-500' : 'text-gray-400 hover:text-white'
+            }`
+          }
+        >
+          <FiUser size={18} />
+          <span>Profile</span>
+        </NavLink>
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="flex flex-col items-center gap-1 text-[10px] font-semibold text-gray-400 hover:text-white"
+        >
+          <FiMenu size={18} />
+          <span>More</span>
+        </button>
       </div>
 
       {/* Mobile Drawer Menu */}

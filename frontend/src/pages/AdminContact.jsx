@@ -110,7 +110,7 @@ export default function AdminContact() {
   };
 
   return (
-    <div className="max-w-3xl glass-panel p-6 sm:p-8 rounded-2xl border border-white/5 mx-auto text-left">
+    <div className="max-w-3xl glass-panel p-5 sm:p-8 rounded-2xl border border-white/5 mx-auto text-left">
       <h3 className="text-base font-bold text-white uppercase tracking-widest mb-6 flex items-center gap-2">
         <FiSettings className="text-red-500" />
         Gym Contact Configuration

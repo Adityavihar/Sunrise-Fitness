@@ -105,7 +105,7 @@ export default function AdminPayments() {
         </div>
       ) : payments.length > 0 ? (
         <div className="glass-panel rounded-2xl border border-white/5 overflow-x-auto">
-          <table className="w-full border-collapse text-left text-xs text-gray-300">
+          <table className="w-full min-w-[700px] border-collapse text-left text-xs text-gray-300">
             <thead>
               <tr className="border-b border-white/5 bg-gym-gray/40 text-[10px] uppercase font-bold text-gray-400 tracking-wider">
                 <th className="py-4 px-6">Member details</th>
@@ -180,7 +180,7 @@ export default function AdminPayments() {
       {/* Inspect / Verification Modal */}
       {activePayment && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4">
-          <div className="glass-panel max-w-lg w-full p-6 sm:p-8 rounded-2xl border border-white/10 relative flex flex-col gap-5 text-left">
+          <div className="glass-panel max-w-lg w-full p-5 sm:p-8 rounded-2xl border border-white/10 relative flex flex-col gap-5 text-left max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setActivePayment(null)}
               className="absolute top-4 right-4 text-gray-400 hover:text-white cursor-pointer"

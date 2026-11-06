@@ -76,10 +76,10 @@ export default function Profile() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
       
       {/* Col 1: Summary Card */}
-      <div className="glass-panel p-6 rounded-2xl border border-white/5 flex flex-col items-center text-center justify-between">
+      <div className="glass-panel p-5 sm:p-6 rounded-2xl border border-white/5 flex flex-col items-center text-center justify-between">
         <div className="w-full flex flex-col items-center">
           
           {/* Profile Picture Uploader */}
@@ -151,7 +151,7 @@ export default function Profile() {
       </div>
 
       {/* Col 2 & 3: Editing Form */}
-      <div className="lg:col-span-2 glass-panel p-6 sm:p-8 rounded-2xl border border-white/5">
+      <div className="lg:col-span-2 glass-panel p-5 sm:p-8 rounded-2xl border border-white/5">
         <h3 className="text-base font-bold text-white uppercase tracking-widest mb-6 flex items-center gap-2">
           <FiInfo className="text-gold-500 text-lg" />
           Edit Profile Information

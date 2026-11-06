@@ -79,7 +79,7 @@ export default function Gallery() {
           <div className="w-10 h-10 border-4 border-t-gold-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
         </div>
       ) : galleryList.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
           {[...galleryList]
             .sort((a, b) => {
               const priority = { 'Gym': 1, 'Machines': 2, 'Workout Area': 3, 'Transformations': 4, 'Events': 5 };
