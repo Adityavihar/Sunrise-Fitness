@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Payment = require('../models/Payment');
 const Plan = require('../models/Plan');
+const SystemConfig = require('../models/SystemConfig');
 
 // @desc    Get dashboard metrics & statistical reports (Admin only)
 // @route   GET /api/reports/dashboard
@@ -21,9 +22,21 @@ const getDashboardStats = async (req, res) => {
       createdAt: { $gte: startOfToday }
     });
 
-    // 2. Revenue Calculation
+    // Check revenue reset timestamp from system configuration
+    const systemConfig = await SystemConfig.findOne();
+    const revenueResetDate = systemConfig?.revenueResetDate || null;
+
+    // 2. Revenue Calculation (filtered by revenueResetDate if active)
+    const revenueMatch = { status: 'approved' };
+    if (revenueResetDate) {
+      revenueMatch.$or = [
+        { updatedAt: { $gt: revenueResetDate } },
+        { createdAt: { $gt: revenueResetDate } }
+      ];
+    }
+
     const revenueResult = await Payment.aggregate([
-      { $match: { status: 'approved' } },
+      { $match: revenueMatch },
       { $group: { _id: null, total: { $sum: '$amount' } } }
     ]);
     const totalRevenue = revenueResult.length > 0 ? revenueResult[0].total : 0;
@@ -31,13 +44,20 @@ const getDashboardStats = async (req, res) => {
     // 3. Monthly Revenue History (Last 6 Months)
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    
+    const monthlyMatch = {
+      status: 'approved',
+      createdAt: { $gte: sixMonthsAgo }
+    };
+    if (revenueResetDate) {
+      monthlyMatch.$or = [
+        { updatedAt: { $gt: revenueResetDate } },
+        { createdAt: { $gt: revenueResetDate } }
+      ];
+    }
+
     const monthlyRevenue = await Payment.aggregate([
-      {
-        $match: {
-          status: 'approved',
-          createdAt: { $gte: sixMonthsAgo }
-        }
-      },
+      { $match: monthlyMatch },
       {
         $group: {
           _id: { $dateToString: { format: '%b %Y', date: '$createdAt' } },
@@ -117,7 +137,8 @@ const getDashboardStats = async (req, res) => {
         expiredMembers,
         pendingPayments,
         todayRegistrations,
-        totalRevenue
+        totalRevenue,
+        revenueResetDate
       },
       charts: {
         revenueHistory,
@@ -131,6 +152,54 @@ const getDashboardStats = async (req, res) => {
   }
 };
 
+// @desc    Reset total revenue counter (Admin only)
+// @route   POST /api/reports/reset-revenue
+// @access  Private/Admin
+const resetRevenue = async (req, res) => {
+  try {
+    let config = await SystemConfig.findOne();
+    if (!config) {
+      config = new SystemConfig();
+    }
+    const resetTimestamp = new Date();
+    config.revenueResetDate = resetTimestamp;
+    await config.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Total revenue counter has been reset to ₹0 successfully.',
+      revenueResetDate: resetTimestamp
+    });
+  } catch (error) {
+    console.error('Reset revenue error:', error);
+    res.status(500).json({ success: false, message: 'Server error resetting total revenue' });
+  }
+};
+
+// @desc    Restore all-time revenue counter (Admin only)
+// @route   POST /api/reports/restore-revenue
+// @access  Private/Admin
+const restoreRevenue = async (req, res) => {
+  try {
+    let config = await SystemConfig.findOne();
+    if (config) {
+      config.revenueResetDate = null;
+      await config.save();
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'All-time revenue counter restored successfully.',
+      revenueResetDate: null
+    });
+  } catch (error) {
+    console.error('Restore revenue error:', error);
+    res.status(500).json({ success: false, message: 'Server error restoring revenue' });
+  }
+};
+
 module.exports = {
-  getDashboardStats
+  getDashboardStats,
+  resetRevenue,
+  restoreRevenue
 };

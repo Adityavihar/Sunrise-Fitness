@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
+import ResetRevenueModal from '../components/ResetRevenueModal';
 import {
   FiUsers, FiTrendingUp, FiCreditCard, FiClock, FiPlus,
-  FiShoppingBag, FiImage, FiSettings, FiBarChart2
+  FiShoppingBag, FiImage, FiSettings, FiBarChart2, FiRotateCcw
 } from 'react-icons/fi';
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip,
@@ -19,7 +20,8 @@ export default function AdminDashboard() {
     expiredMembers: 0,
     pendingPayments: 0,
     todayRegistrations: 0,
-    totalRevenue: 0
+    totalRevenue: 0,
+    revenueResetDate: null
   });
 
   const [charts, setCharts] = useState({
@@ -29,6 +31,7 @@ export default function AdminDashboard() {
   });
 
   const [loading, setLoading] = useState(true);
+  const [resetModalOpen, setResetModalOpen] = useState(false);
 
   useEffect(() => {
     fetchDashboardReports();
@@ -60,7 +63,7 @@ export default function AdminDashboard() {
     { label: 'Expired memberships', val: stats.expiredMembers, icon: FiClock, color: 'text-red-500', bg: 'bg-red-500/10' },
     { label: 'Pending Payments', val: stats.pendingPayments, icon: FiCreditCard, color: 'text-yellow-500', bg: 'bg-yellow-500/10' },
     { label: 'Today\'s Registrations', val: stats.todayRegistrations, icon: FiPlus, color: 'text-gold-500', bg: 'bg-gold-500/10' },
-    { label: 'Total Revenue', val: `₹${stats.totalRevenue}`, icon: FiTrendingUp, color: 'text-gold-500', bg: 'bg-gold-500/10' }
+    { label: 'Total Revenue', val: `₹${Number(stats.totalRevenue).toLocaleString('en-IN')}`, icon: FiTrendingUp, color: 'text-gold-500', bg: 'bg-gold-500/10' }
   ];
 
   return (
@@ -85,19 +88,40 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
             {statsCards.map((card, idx) => {
               const Icon = card.icon;
+              const isRevenue = card.label === 'Total Revenue';
               return (
-                <div key={idx} className="glass-panel p-5 rounded-2xl border border-white/5 flex flex-col justify-between h-32">
+                <div key={idx} className="glass-panel p-5 rounded-2xl border border-white/5 flex flex-col justify-between h-32 relative group">
                   <div className="flex items-center justify-between">
                     <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider leading-normal">
                       {card.label}
                     </span>
-                    <div className={`w-8 h-8 rounded-lg ${card.bg} ${card.color} flex items-center justify-center flex-shrink-0`}>
-                      <Icon size={16} />
+                    <div className="flex items-center gap-1.5">
+                      {isRevenue && (
+                        <button
+                          type="button"
+                          onClick={() => setResetModalOpen(true)}
+                          title="Reset Revenue Counter"
+                          className="p-1.5 rounded-lg bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white border border-red-500/20 hover:border-red-500 transition-all text-[10px] cursor-pointer flex items-center gap-1 font-bold"
+                        >
+                          <FiRotateCcw size={11} />
+                          <span className="hidden sm:inline text-[9px]">Reset</span>
+                        </button>
+                      )}
+                      <div className={`w-8 h-8 rounded-lg ${card.bg} ${card.color} flex items-center justify-center flex-shrink-0`}>
+                        <Icon size={16} />
+                      </div>
                     </div>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-black text-white mt-4 font-display truncate">
-                    {card.val}
-                  </h3>
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-black text-white mt-4 font-display truncate">
+                      {card.val}
+                    </h3>
+                    {isRevenue && stats.revenueResetDate && (
+                      <span className="text-[8px] text-red-400 uppercase tracking-wider font-semibold block truncate">
+                        Reset active
+                      </span>
+                    )}
+                  </div>
                 </div>
               );
             })}
@@ -108,10 +132,20 @@ export default function AdminDashboard() {
             
             {/* Monthly Revenue (2 cols) */}
             <div className="lg:col-span-2 glass-panel p-6 rounded-2xl border border-white/5">
-              <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-6 flex items-center gap-2">
-                <FiTrendingUp className="text-gold-500" />
-                Monthly Revenue Analytics
-              </h3>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                  <FiTrendingUp className="text-gold-500" />
+                  Monthly Revenue Analytics
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setResetModalOpen(true)}
+                  className="px-3 py-1 rounded-lg bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white border border-red-500/20 hover:border-red-500 text-[10px] font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <FiRotateCcw size={12} />
+                  Reset Revenue
+                </button>
+              </div>
               <div className="h-64 w-full">
                 {charts.revenueHistory.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
@@ -150,8 +184,8 @@ export default function AdminDashboard() {
                         data={charts.planDistribution}
                         cx="50%"
                         cy="50%"
-                        innerRadius={45}
-                        outerRadius={65}
+                        innerRadius={50}
+                        outerRadius={75}
                         paddingAngle={5}
                         dataKey="value"
                       >
@@ -164,17 +198,16 @@ export default function AdminDashboard() {
                   </ResponsiveContainer>
                 ) : (
                   <div className="h-full flex items-center justify-center text-gray-500 text-xs">
-                    No members with active plans.
+                    No membership records available.
                   </div>
                 )}
               </div>
-              
-              {/* Legends list */}
-              <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4 text-[10px] justify-center">
+
+              <div className="flex flex-wrap justify-center gap-3 mt-4">
                 {charts.planDistribution.map((entry, idx) => (
-                  <div key={idx} className="flex items-center gap-1.5 text-gray-400">
-                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></span>
-                    <span className="truncate max-w-[80px]">{entry.name}: {entry.value}</span>
+                  <div key={idx} className="flex items-center gap-1.5 text-[10px] text-gray-400">
+                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></span>
+                    {entry.name}: {entry.value}
                   </div>
                 ))}
               </div>
@@ -182,41 +215,38 @@ export default function AdminDashboard() {
 
           </div>
 
-          {/* Charts Row B & Quick navigations */}
+          {/* Charts Row B */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            {/* Daily Registrations (2 cols) */}
+
+            {/* Daily Registrations Bar chart (2 cols) */}
             <div className="lg:col-span-2 glass-panel p-6 rounded-2xl border border-white/5">
               <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-6 flex items-center gap-2">
                 <FiUsers className="text-gold-500" />
-                Daily Member Sign-ups (Last 7 Days)
+                Daily New Client Inflow (Past 7 Days)
               </h3>
-              <div className="h-60 w-full">
-                {charts.dailyRegistrations.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={charts.dailyRegistrations} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                      <XAxis dataKey="date" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
-                      <YAxis stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} allowDecimals={false} />
-                      <Tooltip contentStyle={{ backgroundColor: '#181818', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', color: '#fff', fontSize: '12px' }} />
-                      <Bar dataKey="members" fill="#d4af37" radius={[4, 4, 0, 0]} maxBarSize={30} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <div className="h-full flex items-center justify-center text-gray-500 text-xs">
-                    No sign-ups in the last 7 days.
-                  </div>
-                )}
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={charts.dailyRegistrations} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <XAxis dataKey="date" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} allowDecimals={false} />
+                    <Tooltip contentStyle={{ backgroundColor: '#181818', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', color: '#fff', fontSize: '12px' }} />
+                    <Bar dataKey="members" fill="#d4af37" radius={[6, 6, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </div>
 
-            {/* Admin shortcuts (1 col) */}
-            <div className="glass-panel p-6 rounded-2xl border border-white/5 flex flex-col gap-4">
-              <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-2">Shortcuts</h3>
-              
+            {/* Quick Actions (1 col) */}
+            <div className="glass-panel p-6 rounded-2xl border border-white/5 flex flex-col justify-between gap-4">
+              <div>
+                <span className="text-[9px] uppercase font-bold text-gray-500 tracking-wider">Fast Navigation</span>
+                <h3 className="text-lg font-black text-white uppercase mt-1">Admin Shortcuts</h3>
+              </div>
+
               <Link to="/admin/members" className="flex items-center justify-between p-3.5 rounded-xl bg-gym-gray/60 border border-white/5 hover:border-red-500/30 transition-all text-xs font-semibold text-white group">
                 <span className="flex items-center gap-3">
                   <FiUsers className="text-red-500 text-base" />
-                  Customer Accounts
+                  View Member Database
                 </span>
                 <span>→</span>
               </Link>
@@ -224,14 +254,14 @@ export default function AdminDashboard() {
               <Link to="/admin/payments" className="flex items-center justify-between p-3.5 rounded-xl bg-gym-gray/60 border border-white/5 hover:border-red-500/30 transition-all text-xs font-semibold text-white group">
                 <span className="flex items-center gap-3">
                   <FiCreditCard className="text-red-500 text-base" />
-                  Payments Approval
+                  Audit Pending Payments
                 </span>
                 <span>→</span>
               </Link>
 
               <Link to="/admin/plans" className="flex items-center justify-between p-3.5 rounded-xl bg-gym-gray/60 border border-white/5 hover:border-red-500/30 transition-all text-xs font-semibold text-white group">
                 <span className="flex items-center gap-3">
-                  <FiCreditCard className="text-red-500 text-base" />
+                  <FiTrendingUp className="text-red-500 text-base" />
                   Membership Plans Config
                 </span>
                 <span>→</span>
@@ -257,6 +287,15 @@ export default function AdminDashboard() {
           </div>
         </>
       )}
+
+      {/* Reset Revenue Confirmation Modal */}
+      <ResetRevenueModal
+        isOpen={resetModalOpen}
+        onClose={() => setResetModalOpen(false)}
+        currentRevenue={stats.totalRevenue}
+        revenueResetDate={stats.revenueResetDate}
+        onSuccess={fetchDashboardReports}
+      />
 
     </div>
   );

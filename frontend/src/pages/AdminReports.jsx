@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
-import { FiTrendingUp, FiDownload, FiUsers, FiClock, FiActivity, FiInfo } from 'react-icons/fi';
+import ResetRevenueModal from '../components/ResetRevenueModal';
+import { FiTrendingUp, FiDownload, FiUsers, FiClock, FiActivity, FiInfo, FiRotateCcw } from 'react-icons/fi';
 
 export default function AdminReports() {
   const { addToast } = useToast();
   const [loading, setLoading] = useState(true);
+  const [resetModalOpen, setResetModalOpen] = useState(false);
   const [stats, setStats] = useState({
     totalMembers: 0,
     activeMembers: 0,
     expiredMembers: 0,
     pendingPayments: 0,
     todayRegistrations: 0,
-    totalRevenue: 0
+    totalRevenue: 0,
+    revenueResetDate: null
   });
 
   const [charts, setCharts] = useState({
@@ -46,6 +49,10 @@ export default function AdminReports() {
   // Compile print template for PDF download
   const handleDownloadPdf = () => {
     const printWindow = window.open('', '_blank');
+    const resetInfo = stats.revenueResetDate
+      ? `<br>Revenue Counter Reset Date: ${new Date(stats.revenueResetDate).toLocaleDateString()}`
+      : '';
+
     const reportHtml = `
       <html>
         <head>
@@ -58,7 +65,7 @@ export default function AdminReports() {
             .logo span { color: #d4af37; }
             .subtitle { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 3px; font-weight: bold; margin-top: 5px; }
             .metadata { font-size: 11px; color: #888; text-align: right; margin-bottom: 25px; }
-            .stats-grid { display: grid; grid-template-cols: repeat(3, 1fr); gap: 15px; margin-bottom: 35px; }
+            .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 35px; }
             .stats-card { background: #fafafa; border: 1px solid #eee; padding: 15px; border-radius: 6px; text-align: center; }
             .stats-card span { display: block; font-size: 9px; text-transform: uppercase; color: #777; font-weight: bold; }
             .stats-card h3 { font-size: 20px; margin: 5px 0 0 0; color: #222; font-weight: bold; }
@@ -77,14 +84,14 @@ export default function AdminReports() {
             </div>
 
             <div class="metadata">
-              Report Generated: ${new Date().toLocaleString()}<br>
-              Annavarm Center • Mobile: 9299999288
+              Report Generated: ${new Date().toLocaleString()}${resetInfo}<br>
+              Annavaram Center • Mobile: 9299999288
             </div>
 
             <div class="stats-grid">
               <div class="stats-card">
                 <span>Total Revenue</span>
-                <h3>₹${stats.totalRevenue}</h3>
+                <h3>₹${Number(stats.totalRevenue).toLocaleString('en-IN')}</h3>
               </div>
               <div class="stats-card">
                 <span>Active Members</span>
@@ -99,11 +106,11 @@ export default function AdminReports() {
                 <h3>${stats.pendingPayments}</h3>
               </div>
               <div class="stats-card">
-                <span>Total Registered</span>
+                <span>Total Member Base</span>
                 <h3>${stats.totalMembers}</h3>
               </div>
               <div class="stats-card">
-                <span>Today's Registrations</span>
+                <span>Today's Inflow</span>
                 <h3>${stats.todayRegistrations}</h3>
               </div>
             </div>
@@ -112,7 +119,7 @@ export default function AdminReports() {
             <table class="table">
               <thead>
                 <tr>
-                  <th>Month</th>
+                  <th>Billing Month</th>
                   <th style="text-align: right;">Revenue (INR)</th>
                 </tr>
               </thead>
@@ -180,6 +187,15 @@ export default function AdminReports() {
 
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <button
+            type="button"
+            onClick={() => setResetModalOpen(true)}
+            className="w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl border border-red-500/30 hover:border-red-500 text-xs font-bold text-red-500 hover:bg-red-500/10 transition-all uppercase flex items-center gap-2 cursor-pointer"
+          >
+            <FiRotateCcw />
+            Reset Revenue
+          </button>
+
+          <button
             onClick={handleExportCsv}
             className="w-full sm:w-auto justify-center px-5 py-2.5 rounded-xl border border-gold-500/30 hover:border-gold-500 text-xs font-bold text-gold-500 hover:bg-gold-500/5 transition-all duration-300 uppercase flex items-center gap-2 cursor-pointer"
           >
@@ -207,10 +223,20 @@ export default function AdminReports() {
           {/* Revenue Logs table card */}
           <div className="glass-panel p-6 rounded-2xl border border-white/5 flex flex-col justify-between">
             <div>
-              <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-2">
-                <FiTrendingUp className="text-gold-500" />
-                Monthly Revenue Audits
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                  <FiTrendingUp className="text-gold-500" />
+                  Monthly Revenue Audits
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setResetModalOpen(true)}
+                  className="px-2.5 py-1 rounded-lg bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white border border-red-500/20 hover:border-red-500 text-[10px] font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <FiRotateCcw size={11} />
+                  Reset Revenue
+                </button>
+              </div>
               
               <div className="flex flex-col gap-3">
                 {charts.revenueHistory.length > 0 ? (
@@ -239,12 +265,12 @@ export default function AdminReports() {
                 {charts.planDistribution.length > 0 ? (
                   charts.planDistribution.map((row, idx) => (
                     <div key={idx} className="flex justify-between py-3 border-b border-white/5 last:border-0 text-xs font-medium">
-                      <span className="text-gray-400 uppercase">{row.name}</span>
-                      <span className="text-white font-bold">{row.value} members</span>
+                      <span className="text-gray-400">{row.name}</span>
+                      <span className="text-white font-bold">{row.value} member(s)</span>
                     </div>
                   ))
                 ) : (
-                  <p className="text-xs text-gray-500 py-6 text-center">No active subscribers found.</p>
+                  <p className="text-xs text-gray-500 py-6 text-center">No active distribution calculated.</p>
                 )}
               </div>
             </div>
@@ -252,6 +278,15 @@ export default function AdminReports() {
 
         </div>
       )}
+
+      {/* Reset Revenue Confirmation Modal */}
+      <ResetRevenueModal
+        isOpen={resetModalOpen}
+        onClose={() => setResetModalOpen(false)}
+        currentRevenue={stats.totalRevenue}
+        revenueResetDate={stats.revenueResetDate}
+        onSuccess={fetchReportDetails}
+      />
 
     </div>
   );
