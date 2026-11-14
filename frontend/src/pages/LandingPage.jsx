@@ -9,7 +9,7 @@ import {
   FiAward, FiShield, FiHeart, FiTrendingUp, FiShoppingBag, FiInstagram, FiFacebook, FiYoutube
 } from 'react-icons/fi';
 
-import HeroScrollSection from '../components/HeroScrollSection';
+import heroImg from '../assets/gym_hero_bg.jpg';
 
 export default function LandingPage() {
   const { user } = useAuth();
@@ -126,8 +126,80 @@ export default function LandingPage() {
   return (
     <div className="relative">
       
-      {/* 1. HERO SCROLL ANIMATION SECTION */}
-      <HeroScrollSection user={user} onJoinClick={handleJoinClick} />
+      {/* 1. HERO SECTION */}
+      <section id="home" className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden">
+        {/* Fullscreen Background */}
+        <div className="absolute inset-0 z-0">
+          <img src={heroImg} alt="Gym Hero" className="w-full h-full object-cover opacity-45 scale-105 animate-pulse-slow" />
+          <div className="absolute inset-0 bg-gradient-to-t from-gym-dark via-gym-dark/60 to-black/20" />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 max-w-7xl mx-auto px-6 text-center pt-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <span className="inline-block px-4 py-1.5 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-500 text-xs font-bold uppercase tracking-widest mb-6">
+              Build Your Ultimate Physique
+            </span>
+            <h1 className="text-4xl sm:text-6xl md:text-8xl font-black text-white uppercase tracking-tight leading-none mb-6">
+              SUNRISE <span className="gold-text-gradient">FITNESS</span>
+            </h1>
+            <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto font-light leading-relaxed mb-10">
+              The premier fitness and strength training environment in Annavaram. Step into luxury space, expert coaching, and results-driven community.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button
+                onClick={() => {
+                  const plansEl = document.getElementById('plans');
+                  if (plansEl) plansEl.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold tracking-wide shadow-lg shadow-red-600/30 hover:shadow-red-600/50 transition-all duration-300 cursor-pointer flex items-center justify-center gap-2"
+              >
+                Join Today
+                <FiArrowRight />
+              </button>
+              {user ? (
+                <Link
+                  to={user.role === 'admin' ? '/admin' : '/dashboard'}
+                  className="w-full sm:w-auto px-8 py-4 rounded-full bg-white/10 hover:bg-white/15 text-white border border-white/15 hover:border-white/30 font-bold transition-all duration-300 flex items-center justify-center"
+                >
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <Link
+                  to="/login"
+                  className="w-full sm:w-auto px-8 py-4 rounded-full bg-white/10 hover:bg-white/15 text-white border border-white/15 hover:border-white/30 font-bold transition-all duration-300 flex items-center justify-center"
+                >
+                  Member Login
+                </Link>
+              )}
+            </div>
+          </motion.div>
+
+          {/* Animated Statistics */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.4 }}
+            className="grid grid-cols-3 gap-4 sm:gap-8 max-w-3xl mx-auto mt-20 pt-10 border-t border-white/5"
+          >
+            {[
+              { num: '100+', label: 'Active Members' },
+              { num: '50+', label: 'Imported Machines' },
+              { num: '5.0★', label: 'Client Reviews' }
+            ].map((stat, idx) => (
+              <div key={idx} className="text-center">
+                <h3 className="text-2xl sm:text-4xl font-extrabold text-gold-500 font-display">{stat.num}</h3>
+                <p className="text-[9px] sm:text-xs text-gray-400 mt-1 uppercase tracking-widest">{stat.label}</p>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
 
       {/* 2. ABOUT GYM */}
       <section id="about" className="py-24 bg-gym-dark relative">
