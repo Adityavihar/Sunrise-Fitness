@@ -128,13 +128,22 @@ const updateMember = async (req, res) => {
       user.profilePicture = getFileUrl(req.file, req);
     }
 
-    // Admin-only updates: Direct status toggle and password reset
+    // Admin-only updates: Direct status toggle, date adjustments, and password reset
     if (req.user.role === 'admin') {
       if (req.body.membershipStatus) {
         user.membershipStatus = req.body.membershipStatus;
       }
       if (req.body.password && req.body.password.trim() !== '') {
         user.password = req.body.password;
+      }
+      if (req.body.joinDate !== undefined) {
+        user.joinDate = req.body.joinDate ? new Date(req.body.joinDate) : (user.joinDate || user.createdAt);
+      }
+      if (req.body.membershipStart !== undefined) {
+        user.membershipStart = req.body.membershipStart ? new Date(req.body.membershipStart) : null;
+      }
+      if (req.body.membershipExpiry !== undefined) {
+        user.membershipExpiry = req.body.membershipExpiry ? new Date(req.body.membershipExpiry) : null;
       }
     }
 
@@ -156,6 +165,7 @@ const updateMember = async (req, res) => {
         weight: user.weight,
         membershipStatus: user.membershipStatus,
         membershipPlan: user.membershipPlan,
+        joinDate: user.joinDate || user.createdAt,
         membershipStart: user.membershipStart,
         membershipExpiry: user.membershipExpiry,
         bmiHistory: user.bmiHistory,
@@ -281,12 +291,13 @@ const exportMembersCsv = async (req, res) => {
     const members = await User.find({ role: 'member' }).populate('membershipPlan');
 
     // Create CSV header
-    let csvContent = 'Name,Email,Phone,Age,Gender,Status,Membership Plan,Period (Start),Period (Expiry),Amount to be Paid,Paid Status,Payment Submission Date,Payment Submission Day,Payment Submission Time,Last Payment Ref,Login Times History,Logout Times History\n';
+    let csvContent = 'Name,Email,Phone,Age,Gender,Date Joined,Status,Membership Plan,Period (Start),Period (Expiry),Amount to be Paid,Paid Status,Payment Submission Date,Payment Submission Day,Payment Submission Time,Last Payment Ref,Login Times History,Logout Times History\n';
 
     // Populate lines
     for (let i = 0; i < members.length; i++) {
       const member = members[i];
       const planName = member.membershipPlan ? member.membershipPlan.name : 'None';
+      const joined = member.joinDate ? new Date(member.joinDate).toLocaleDateString() : (member.createdAt ? new Date(member.createdAt).toLocaleDateString() : 'N/A');
       const start = member.membershipStart ? new Date(member.membershipStart).toLocaleDateString() : 'N/A';
       const expiry = member.membershipExpiry ? new Date(member.membershipExpiry).toLocaleDateString() : 'N/A';
 
@@ -334,6 +345,7 @@ const exportMembersCsv = async (req, res) => {
         `"${member.phone.replace(/"/g, '""')}"`,
         member.age || 'N/A',
         member.gender || 'N/A',
+        `"${joined}"`,
         member.membershipStatus,
         `"${planName.replace(/"/g, '""')}"`,
         `"${start}"`,

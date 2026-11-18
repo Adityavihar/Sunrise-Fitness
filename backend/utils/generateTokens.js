@@ -58,6 +58,7 @@ const sendTokenResponse = async (user, statusCode, res) => {
       weight: user.weight,
       membershipStatus: user.membershipStatus,
       membershipPlan: user.membershipPlan,
+      joinDate: user.joinDate || user.createdAt,
       membershipStart: user.membershipStart,
       membershipExpiry: user.membershipExpiry,
       bmiHistory: user.bmiHistory,

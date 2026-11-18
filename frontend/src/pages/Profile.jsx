@@ -117,6 +117,16 @@ export default function Profile() {
               </p>
             </div>
             <div>
+              <span className="text-[9px] uppercase tracking-widest text-gray-500 font-semibold">Date of Joining</span>
+              <p className="text-xs text-gray-300 mt-1">
+                {user?.joinDate
+                  ? new Date(user.joinDate).toLocaleDateString()
+                  : user?.createdAt
+                  ? new Date(user.createdAt).toLocaleDateString()
+                  : 'N/A'}
+              </p>
+            </div>
+            <div>
               <span className="text-[9px] uppercase tracking-widest text-gray-500 font-semibold">Status</span>
               <span className={`inline-flex items-center gap-1.5 text-xs mt-1 capitalize font-semibold ${
                 user?.membershipStatus === 'active' ? 'text-green-500' : 'text-yellow-500'

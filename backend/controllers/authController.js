@@ -42,7 +42,8 @@ const registerUser = async (req, res) => {
       age: age ? Number(age) : null,
       gender: gender || '',
       height: height ? Number(height) : null,
-      weight: weight ? Number(weight) : null
+      weight: weight ? Number(weight) : null,
+      joinDate: new Date()
     });
 
     // Record initial BMI if height and weight are provided
@@ -230,6 +231,7 @@ const verifyUser = async (req, res) => {
         weight: user.weight,
         membershipStatus: user.membershipStatus,
         membershipPlan: user.membershipPlan,
+        joinDate: user.joinDate || user.createdAt,
         membershipStart: user.membershipStart,
         membershipExpiry: user.membershipExpiry,
         bmiHistory: user.bmiHistory,

@@ -139,6 +139,9 @@ const verifyPayment = async (req, res) => {
       user.membershipStatus = 'active';
       user.membershipStart = startDate;
       user.membershipExpiry = expiryDate;
+      if (!user.joinDate) {
+        user.joinDate = startDate;
+      }
 
       // Add approval notification
       user.notifications.push({

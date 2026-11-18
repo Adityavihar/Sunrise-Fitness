@@ -92,6 +92,10 @@ const userSchema = new mongoose.Schema(
       enum: ['inactive', 'pending', 'active', 'expired', 'suspended'],
       default: 'inactive'
     },
+    joinDate: {
+      type: Date,
+      default: Date.now
+    },
     membershipStart: {
       type: Date,
       default: null

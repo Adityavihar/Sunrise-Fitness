@@ -3,8 +3,19 @@ import api from '../services/api';
 import { useToast } from '../context/ToastContext';
 import {
   FiSearch, FiFilter, FiUserCheck, FiUserMinus, FiTrash2,
-  FiEdit, FiPlusCircle, FiDownload, FiX, FiInfo
+  FiEdit, FiPlusCircle, FiDownload, FiX, FiInfo, FiCalendar
 } from 'react-icons/fi';
+
+const formatDateForInput = (dateVal) => {
+  if (!dateVal) return '';
+  try {
+    const d = new Date(dateVal);
+    if (isNaN(d.getTime())) return '';
+    return d.toISOString().split('T')[0];
+  } catch (e) {
+    return '';
+  }
+};
 
 export default function AdminMembers() {
   const { addToast } = useToast();
@@ -83,6 +94,16 @@ export default function AdminMembers() {
     } catch (err) {
       addToast('Error updating suspension status.', 'error');
     }
+  };
+
+  const handleOpenEdit = (member) => {
+    setEditMember({
+      ...member,
+      joinDate: formatDateForInput(member.joinDate || member.createdAt),
+      membershipStart: formatDateForInput(member.membershipStart),
+      membershipExpiry: formatDateForInput(member.membershipExpiry)
+    });
+    setNewPassword('');
   };
 
   // Extend Membership Action
@@ -189,11 +210,12 @@ export default function AdminMembers() {
         </div>
       ) : members.length > 0 ? (
         <div className="glass-panel rounded-2xl border border-white/5 overflow-x-auto">
-          <table className="w-full min-w-[750px] border-collapse text-left text-xs text-gray-300">
+          <table className="w-full min-w-[850px] border-collapse text-left text-xs text-gray-300">
             <thead>
               <tr className="border-b border-white/5 bg-gym-gray/40 text-[10px] uppercase font-bold text-gray-400 tracking-wider">
                 <th className="py-4 px-6">Member Profile</th>
                 <th className="py-4 px-6">Phone / Contact</th>
+                <th className="py-4 px-6">Date Joined</th>
                 <th className="py-4 px-6">Status</th>
                 <th className="py-4 px-6">Active Plan</th>
                 <th className="py-4 px-6">Expiry Date</th>
@@ -221,6 +243,17 @@ export default function AdminMembers() {
                   {/* Phone */}
                   <td className="py-4 px-6 font-medium text-gray-300">{member.phone}</td>
 
+                  {/* Date Joined */}
+                  <td className="py-4 px-6 font-medium text-gray-300">
+                    <span className="text-white font-semibold">
+                      {member.joinDate
+                        ? new Date(member.joinDate).toLocaleDateString()
+                        : member.createdAt
+                        ? new Date(member.createdAt).toLocaleDateString()
+                        : 'N/A'}
+                    </span>
+                  </td>
+
                   {/* Status */}
                   <td className="py-4 px-6">
                     <span className={`inline-block px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
@@ -247,8 +280,8 @@ export default function AdminMembers() {
                   {/* Actions column */}
                   <td className="py-4 px-6 text-right flex items-center justify-end gap-2">
                     <button
-                      onClick={() => { setEditMember(member); setNewPassword(''); }}
-                      title="Edit member details"
+                      onClick={() => handleOpenEdit(member)}
+                      title="Edit member details & dates"
                       className="p-2 rounded bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition-colors cursor-pointer"
                     >
                       <FiEdit />
@@ -294,7 +327,7 @@ export default function AdminMembers() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4">
           <form
             onSubmit={handleEditSubmit}
-            className="glass-panel max-w-md w-full p-5 sm:p-6 rounded-2xl border border-white/10 relative flex flex-col gap-4 text-left max-h-[90vh] overflow-y-auto"
+            className="glass-panel max-w-lg w-full p-5 sm:p-6 rounded-2xl border border-white/10 relative flex flex-col gap-4 text-left max-h-[90vh] overflow-y-auto"
           >
             <button
               type="button"
@@ -304,9 +337,12 @@ export default function AdminMembers() {
               <FiX size={18} />
             </button>
 
-            <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-3">
-              Modify Member profile details
-            </h3>
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-gold-500">Member Editor</span>
+              <h3 className="text-sm font-bold text-white uppercase tracking-widest mt-0.5">
+                Modify Member Profile & Joining Dates
+              </h3>
+            </div>
 
             <div>
               <label className="block text-[9px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Name</label>
@@ -362,6 +398,59 @@ export default function AdminMembers() {
               </div>
             </div>
 
+            {/* Joining & Membership Dates Box */}
+            <div className="p-3.5 rounded-xl bg-black/40 border border-gold-500/20 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] uppercase font-bold text-gold-500 tracking-wider flex items-center gap-1.5">
+                  <FiCalendar size={12} />
+                  Joining & Membership Dates
+                </span>
+                <span className="text-[9px] text-gray-400">Gym Join Date Override</span>
+              </div>
+
+              <div>
+                <label className="block text-[9px] uppercase tracking-wider text-gray-300 mb-1 font-semibold">
+                  Date of Joining (Physical / Gym Join Date) *
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={editMember.joinDate || ''}
+                  onChange={(e) => setEditMember({ ...editMember, joinDate: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl bg-gym-dark border border-gold-500/40 text-xs text-white focus:border-gold-500 focus:outline-none"
+                />
+                <span className="text-[9px] text-gray-400 mt-1 block">
+                  Set the actual date member joined the gym (useful when member joins & pays in person before registering online).
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-1">
+                <div>
+                  <label className="block text-[9px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">
+                    Membership Start Date
+                  </label>
+                  <input
+                    type="date"
+                    value={editMember.membershipStart || ''}
+                    onChange={(e) => setEditMember({ ...editMember, membershipStart: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-gym-dark border border-white/10 text-xs text-white focus:border-gold-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[9px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">
+                    Membership Expiry Date
+                  </label>
+                  <input
+                    type="date"
+                    value={editMember.membershipExpiry || ''}
+                    onChange={(e) => setEditMember({ ...editMember, membershipExpiry: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-gym-dark border border-white/10 text-xs text-white focus:border-gold-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-[9px] uppercase tracking-wider text-gray-400 mb-1 font-semibold">Membership Status</label>
@@ -390,9 +479,9 @@ export default function AdminMembers() {
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-gold-500 hover:bg-gold-400 text-black text-xs font-bold uppercase transition-colors mt-2"
+              className="w-full py-3 rounded-xl bg-gold-500 hover:bg-gold-400 text-black text-xs font-bold uppercase transition-colors mt-2 cursor-pointer"
             >
-              Save Profile Changes
+              Save Member Details & Dates
             </button>
           </form>
         </div>
